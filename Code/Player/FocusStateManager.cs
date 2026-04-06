@@ -3,21 +3,20 @@ using System;
 
 /// <summary>
 /// Manages transitions between FPS mode and focus mode (computer, pill station, ID card).
-/// Attach to the Player root alongside the s&box built-in PlayerController.
+/// Attach to the Player root alongside Sandbox.PlayerController.
 /// Replaces Unity's FocusStateManager.cs.
 /// </summary>
 public sealed class FocusStateManager : Component
 {
 	[Property] public float TransitionDuration { get; set; } = 0.3f;
 
-	/// <summary>True while focused on a station. Blocks PlayerController input.</summary>
+	/// <summary>True while focused on a station. Blocks player input.</summary>
 	public bool IsFocused { get; private set; }
 
 	// Events
 	public Action<bool> OnFocusChanged;
 
 	private GameObject _focusTarget;
-	private Angles _savedEyeAngles;
 	private Action _onExit;
 	private PlayerController _player;
 
@@ -45,11 +44,11 @@ public sealed class FocusStateManager : Component
 
 		if ( _player != null )
 		{
-			_savedEyeAngles = _player.EyeAngles;
-			_player.Enabled = false; // disable built-in controller: stops movement + camera update
+			_player.UseInputControls = false;
+			_player.UseLookControls = false;
+			_player.UseCameraControls = false;
 		}
 
-		// Start lerp from current camera position
 		_transitionFromPos = Scene.Camera.WorldPosition;
 		_transitionFromRot = Scene.Camera.WorldRotation;
 		_transitionProgress = 0f;
@@ -59,18 +58,13 @@ public sealed class FocusStateManager : Component
 		OnFocusChanged?.Invoke( true );
 	}
 
-	/// <summary>Exit focus mode, lerping camera back to FPS position.</summary>
+	/// <summary>Exit focus mode, lerping camera back then re-enabling built-in controls.</summary>
 	public void ExitFocus()
 	{
 		if ( !IsFocused ) return;
 
 		IsFocused = false;
 
-		// Restore look direction so the built-in controller resumes facing the right way
-		if ( _player != null )
-			_player.EyeAngles = _savedEyeAngles;
-
-		// Start lerp back — built-in controller re-enables when lerp completes
 		_transitionFromPos = Scene.Camera.WorldPosition;
 		_transitionFromRot = Scene.Camera.WorldRotation;
 		_transitionProgress = 0f;
@@ -87,14 +81,10 @@ public sealed class FocusStateManager : Component
 	{
 		if ( IsProxy ) return;
 
-		if ( IsFocused )
+		if ( IsFocused && Input.Pressed( "menu" ) )
 		{
-			// Escape exits focus
-			if ( Input.Pressed( "menu" ) )
-			{
-				ExitFocus();
-				return;
-			}
+			ExitFocus();
+			return;
 		}
 
 		if ( _transitioning )
@@ -105,7 +95,6 @@ public sealed class FocusStateManager : Component
 	{
 		_transitionProgress += Time.Delta / TransitionDuration;
 		_transitionProgress = _transitionProgress.Clamp( 0f, 1f );
-		// Smoothstep easing
 		float t = _transitionProgress * _transitionProgress * (3f - 2f * _transitionProgress);
 
 		if ( _enteringFocus && _focusTarget != null && _focusTarget.IsValid() )
@@ -113,13 +102,12 @@ public sealed class FocusStateManager : Component
 			Scene.Camera.WorldPosition = Vector3.Lerp( _transitionFromPos, _focusTarget.WorldPosition, t );
 			Scene.Camera.WorldRotation = Rotation.Lerp( _transitionFromRot, _focusTarget.WorldRotation, t );
 		}
-		else if ( !_enteringFocus && _player != null )
+		else if ( !_enteringFocus )
 		{
-			// Lerp back toward the eye position the built-in controller will resume at
-			var eyePos = _player.WorldPosition + Vector3.Up * 64f;
-			var eyeRot = _savedEyeAngles.ToRotation();
+			// Lerp back toward the built-in controller's eye position.
+			// BodyHeight (72) - EyeDistanceFromTop (8) = 64 units above player root.
+			var eyePos = GameObject.WorldPosition + Vector3.Up * 64f;
 			Scene.Camera.WorldPosition = Vector3.Lerp( _transitionFromPos, eyePos, t );
-			Scene.Camera.WorldRotation = Rotation.Lerp( _transitionFromRot, eyeRot, t );
 		}
 
 		if ( _transitionProgress >= 1f )
@@ -133,8 +121,10 @@ public sealed class FocusStateManager : Component
 			}
 			else if ( !_enteringFocus && _player != null )
 			{
-				// Lerp complete — hand camera back to the built-in controller
-				_player.Enabled = true;
+				// Lerp complete — hand camera back to built-in controller
+				_player.UseCameraControls = true;
+				_player.UseLookControls = true;
+				_player.UseInputControls = true;
 			}
 		}
 	}

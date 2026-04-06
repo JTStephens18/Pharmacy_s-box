@@ -1,0 +1,12 @@
+{
+  "Prescribers": [
+    {
+      "PrescriberName": "John Doe",
+      "NPI": "001",
+      "Specialty": "Cardiology",
+      "Address": "88 Medical Drive"
+    }
+  ],
+  "__references": [],
+  "__version": 0
+}

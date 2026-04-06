@@ -1,0 +1,13 @@
+{
+  "FullName": "John Doe",
+  "DateOfBirth": "01/01/1997",
+  "Address": "123 Applebranch Rd",
+  "IdNumber": "0069",
+  "PhotoSprite": null,
+  "IdCardPhotoSprite": null,
+  "IdCardName": "",
+  "IdCardPhoto": null,
+  "IdCardDisplayName": "John Doe",
+  "__references": [],
+  "__version": 0
+}

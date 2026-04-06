@@ -1,0 +1,69 @@
+.computer-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 520px;
+    background-color: rgba(5, 15, 30, 0.95);
+    border: 1px solid rgba(80, 160, 255, 0.4);
+    border-radius: 6px;
+    color: #c8dff0;
+    font-family: "Roboto Mono", monospace;
+    font-size: 12px;
+    z-index: 200;
+}
+
+.tab-bar {
+    display: flex;
+    border-bottom: 1px solid rgba(80, 160, 255, 0.3);
+    padding: 0 8px;
+}
+
+.tab-button {
+    background: transparent;
+    border: none;
+    color: #6090b0;
+    padding: 8px 14px;
+    cursor: pointer;
+    font-size: 11px;
+
+    &:hover { color: #90c0e0; }
+    &.active {
+        color: #60d0ff;
+        border-bottom: 2px solid #60d0ff;
+    }
+}
+
+.computer-view {
+    padding: 14px 16px;
+    min-height: 200px;
+}
+
+.field {
+    margin-bottom: 6px;
+    line-height: 1.4;
+}
+
+.label {
+    color: #5090b0;
+    margin-right: 4px;
+}
+
+.npc-photo {
+    float: right;
+    margin-left: 12px;
+}
+
+.fill-entry {
+    padding-left: 12px;
+    color: #80a0b8;
+    font-size: 11px;
+    margin-bottom: 2px;
+}
+
+.placeholder {
+    color: #3a5a70;
+    font-style: italic;
+    margin-top: 30px;
+    text-align: center;
+}

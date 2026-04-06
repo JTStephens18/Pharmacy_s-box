@@ -1,0 +1,10 @@
+{
+  "NpcPool": [],
+  "QueueEntries": [],
+  "DoppelgangerPool": [
+    "npcs/npcidentities/doppelgangers/johndoe.doppelga"
+  ],
+  "RandomDoppelgangerCount": 1,
+  "__references": [],
+  "__version": 0
+}

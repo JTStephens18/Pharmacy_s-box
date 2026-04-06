@@ -1,0 +1,106 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits PanelComponent
+
+<root>
+    @{
+        var screen = Scene?.GetAllComponents<ComputerScreen>().FirstOrDefault( s => s.IsActive );
+    }
+
+    @if ( screen != null )
+    {
+        <div class="computer-overlay">
+            <!-- Tab bar -->
+            <div class="tab-bar">
+                <button class=@TabClass(screen, 0) onclick=@(() => screen.ShowView(0))>Identity</button>
+                <button class=@TabClass(screen, 1) onclick=@(() => screen.ShowView(1))>Prescription</button>
+                <button class=@TabClass(screen, 2) onclick=@(() => screen.ShowView(2))>NPI Lookup</button>
+            </div>
+
+            <!-- Identity view -->
+            @if ( screen.ActiveViewIndex == 0 )
+            {
+                var npc = NPCInfoDisplay.Instance;
+                <div class="computer-view identity-view">
+                    @if ( npc?.IsShowing == true && npc.CurrentNPC != null )
+                    {
+                        var identity = npc.CurrentNPC.NpcIdentity;
+                        var dopple = npc.CurrentNPC.DoppelgangerData;
+
+                        @if ( identity != null )
+                        {
+                            <div class="npc-photo">
+                                <div style="background-image: url(@(dopple?.GetPhoto(identity.PhotoSprite)?.ResourcePath ?? identity.PhotoSprite?.ResourcePath)); width: 80px; height: 80px; background-size: cover;"></div>
+                            </div>
+                            <div class="npc-fields">
+                                <div class="field"><span class="label">Name:</span> @identity.FullName</div>
+                                <div class="field"><span class="label">DOB:</span> @(dopple?.GetDOB(identity.DateOfBirth) ?? identity.DateOfBirth)</div>
+                                <div class="field"><span class="label">Address:</span> @(dopple?.GetAddress(identity.Address) ?? identity.Address)</div>
+                                <div class="field"><span class="label">ID #:</span> @identity.IdNumber</div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="placeholder">Scan ID card to view patient information</div>
+                    }
+                </div>
+            }
+
+            <!-- Prescription view -->
+            @if ( screen.ActiveViewIndex == 1 )
+            {
+                var npc = NPCInfoDisplay.Instance;
+                <div class="computer-view prescription-view">
+                    @if ( npc?.IsShowing == true && npc.CurrentNPC?.Prescription != null )
+                    {
+                        var rx = npc.CurrentNPC.Prescription;
+                        var dopple = npc.CurrentNPC.DoppelgangerData;
+                        <div class="field"><span class="label">Medication:</span> @rx.MedicationName</div>
+                        <div class="field"><span class="label">Quantity:</span> @(dopple?.GetQuantity(rx.Quantity) ?? rx.Quantity)</div>
+                        <div class="field"><span class="label">Dosage:</span> @(dopple?.GetDosage(rx.Dosage) ?? rx.Dosage)</div>
+                        <div class="field"><span class="label">Prescriber:</span> @rx.PrescriberName</div>
+                        <div class="field"><span class="label">NPI:</span> @(dopple?.GetPrescriberNPI(rx.PrescriberNPI) ?? rx.PrescriberNPI)</div>
+                        <div class="field"><span class="label">Specialty:</span> @(dopple?.GetPrescriberSpecialty(rx.PrescriberSpecialty) ?? rx.PrescriberSpecialty)</div>
+                        <div class="field"><span class="label">Address:</span> @rx.PrescriberAddress</div>
+                        @if ( rx.PreviousFills?.Length > 0 )
+                        {
+                            <div class="field fill-history"><span class="label">Fill History:</span></div>
+                            foreach ( var fill in rx.PreviousFills )
+                            {
+                                <div class="fill-entry">@fill</div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="field"><span class="label">Fill History:</span> No previous fills</div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="placeholder">No prescription on file</div>
+                    }
+                </div>
+            }
+
+            <!-- NPI Lookup view -->
+            @if ( screen.ActiveViewIndex == 2 )
+            {
+                <div class="computer-view npi-view">
+                    <div class="placeholder">NPI Lookup — wire up NPISearchPanel component</div>
+                </div>
+            }
+        </div>
+    }
+</root>
+
+@code {
+    string TabClass( ComputerScreen screen, int idx ) =>
+        "tab-button" + (screen.ActiveViewIndex == idx ? " active" : "");
+
+    protected override int BuildHash() =>
+        System.HashCode.Combine(
+            Scene?.GetAllComponents<ComputerScreen>().FirstOrDefault( s => s.IsActive )?.ActiveViewIndex,
+            NPCInfoDisplay.Instance?.CurrentNPC
+        );
+}

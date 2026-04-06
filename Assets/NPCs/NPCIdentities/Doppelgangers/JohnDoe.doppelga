@@ -1,0 +1,12 @@
+{
+  "Discrepancies": [],
+  "FakePhoto": null,
+  "FakeDOB": "",
+  "FakeAddress": "876 Address Rd",
+  "FakePrescriberNPI": "",
+  "FakePrescriberSpecialty": "",
+  "FakeDosage": "",
+  "FakeQuantity": 0,
+  "__references": [],
+  "__version": 0
+}

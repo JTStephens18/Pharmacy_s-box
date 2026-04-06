@@ -1,0 +1,487 @@
+using Sandbox;
+using System;
+using System.Collections.Generic;
+
+/// <summary>
+/// Controls NPC behavior: item collection, counter delivery, checkout, exit.
+/// 8-state machine running on the host only.
+/// Replaces Unity's NPCInteractionController.cs.
+/// </summary>
+public sealed class NPCController : Component
+{
+	// ── Static event ─────────────────────────────────────────────────
+	/// <summary>Fired just before this NPC is destroyed. Used by NPCSpawnManager.</summary>
+	public static event Action<NPCController> OnNPCExited;
+
+	// ── Inspector fields ─────────────────────────────────────────────
+	[Group( "Detection" )]
+	[Property] public float DetectionRadius { get; set; } = 500f;
+
+	[Group( "Interaction" )]
+	[Property] public float ReachDistance { get; set; } = 40f;
+
+	[Group( "Interaction" )]
+	[Property] public GameObject HandBone { get; set; }
+
+	[Group( "Item Preferences" )]
+	[Property] public List<ItemCategory> WantedCategories { get; set; } = new();
+
+	[Group( "Behavior" )]
+	[Property] public bool AutoScan { get; set; } = true;
+	[Group( "Behavior" )]
+	[Property] public float ScanInterval { get; set; } = 1f;
+	[Group( "Behavior" )]
+	[Property] public float PickupPauseTime { get; set; } = 0.5f;
+	[Group( "Behavior" )]
+	[Property] public int BatchSize { get; set; } = 4;
+	[Group( "Behavior" )]
+	[Property] public bool IsCollecting { get; set; } = true;
+
+	[Group( "ID Card" )]
+	[Property] public NPCIdentity NpcIdentity { get; set; }
+	[Group( "ID Card" )]
+	[Property] public GameObject IdCardPrefab { get; set; }
+
+	[Group( "Prescription" )]
+	[Property] public PrescriptionData Prescription { get; set; }
+
+	// ── State ─────────────────────────────────────────────────────────
+	public enum NPCState
+	{
+		Idle,
+		MovingToItem,
+		WaitingAtItem,
+		PickingUp,
+		MovingToCounter,
+		PlacingItem,
+		WaitingForCheckout,
+		MovingToExit
+	}
+
+	[Sync( SyncFlags.FromHost )] public int NetworkState { get; set; } = 0;
+
+	public NPCState CurrentState => (NPCState)NetworkState;
+
+	private NPCState _state
+	{
+		get => (NPCState)NetworkState;
+		set => NetworkState = (int)value;
+	}
+
+	// Scene references (injected by NPCSpawnManager)
+	private List<CounterSlot> _counterSlots = new();
+	private GameObject _exitPoint;
+	private IDCardSlot _idCardSlot;
+	private List<ShelfSlot> _allowedShelfSlots = new();
+	private bool _useShelfSlots;
+
+	// Runtime state
+	private NavMeshAgent _agent;
+	private InteractableItem _currentTargetItem;
+	private List<InteractableItem> _heldItems = new();
+	private List<GameObject> _placedItems = new();
+	private float _scanTimer;
+	private float _pauseTimer;
+	private bool _hasStartedMoving;
+	private bool _hasCheckedOut;
+	private bool _hasPlacedIDCard;
+	private GameObject _spawnedIdCard;
+
+	// Doppelganger
+	public DoppelgangerProfile DoppelgangerData { get; private set; }
+	public bool IsDoppelganger => DoppelgangerData != null;
+
+	// Animation events
+	public event Action OnPickupStart;
+	public event Action OnPlaceStart;
+
+	// ── Lifecycle ─────────────────────────────────────────────────────
+
+	protected override void OnAwake()
+	{
+		_agent = GetComponent<NavMeshAgent>();
+	}
+
+	protected override void OnFixedUpdate()
+	{
+		if ( !Networking.IsHost ) return;
+
+		switch ( _state )
+		{
+			case NPCState.Idle: HandleIdle(); break;
+			case NPCState.MovingToItem: HandleMovingToItem(); break;
+			case NPCState.WaitingAtItem: HandleWaitingAtItem(); break;
+			case NPCState.PickingUp: HandlePickingUp(); break;
+			case NPCState.MovingToCounter: HandleMovingToCounter(); break;
+			case NPCState.PlacingItem: HandlePlacingItem(); break;
+			case NPCState.WaitingForCheckout: HandleWaitingForCheckout(); break;
+			case NPCState.MovingToExit: HandleMovingToExit(); break;
+		}
+	}
+
+	// ── Scene reference injection ─────────────────────────────────────
+
+	/// <summary>Called by NPCSpawnManager after instantiation to inject shared scene refs.</summary>
+	public void AssignSceneReferences( List<CounterSlot> counters, GameObject exit, IDCardSlot cardSlot, List<ShelfSlot> shelfSlots )
+	{
+		_counterSlots = counters ?? new();
+		_exitPoint = exit;
+		_idCardSlot = cardSlot;
+		_allowedShelfSlots = shelfSlots ?? new();
+		_useShelfSlots = _allowedShelfSlots.Count > 0;
+	}
+
+	/// <summary>Assigns a doppelganger profile (null = real patient).</summary>
+	public void AssignDoppelgangerProfile( DoppelgangerProfile profile )
+	{
+		DoppelgangerData = profile;
+	}
+
+	// ── Public API ────────────────────────────────────────────────────
+
+	/// <summary>Called by CashRegister to send this NPC to exit.</summary>
+	public void TriggerCheckout()
+	{
+		if ( !Networking.IsHost ) return;
+		_hasCheckedOut = true;
+	}
+
+	/// <summary>Called by GunCase to kill this NPC.</summary>
+	public void Kill()
+	{
+		if ( !Networking.IsHost ) return;
+		FireExitEvent();
+		GameObject.Destroy();
+	}
+
+	// ── State handlers ────────────────────────────────────────────────
+
+	private void HandleIdle()
+	{
+		if ( _hasCheckedOut )
+		{
+			GoToExit();
+			return;
+		}
+
+		if ( !AutoScan || !IsCollecting ) return;
+
+		_scanTimer += Time.Delta;
+		if ( _scanTimer >= ScanInterval )
+		{
+			_scanTimer = 0f;
+			ScanForItems();
+		}
+	}
+
+	private void HandleMovingToItem()
+	{
+		if ( _currentTargetItem == null || !_currentTargetItem.IsValid() )
+		{
+			_currentTargetItem = null;
+			_state = NPCState.Idle;
+			return;
+		}
+
+		if ( _agent == null ) return;
+
+		if ( !_hasStartedMoving )
+		{
+			float dist = WorldPosition.Distance( _currentTargetItem.WorldPosition );
+			if ( dist > ReachDistance )
+				_hasStartedMoving = true;
+			else
+			{
+				_hasStartedMoving = false;
+				_pauseTimer = 0f;
+				_state = NPCState.WaitingAtItem;
+				return;
+			}
+		}
+
+		if ( _hasStartedMoving && _agent.Velocity.LengthSquared < 1f )
+		{
+			_hasStartedMoving = false;
+			_pauseTimer = 0f;
+			_state = NPCState.WaitingAtItem;
+		}
+	}
+
+	private void HandleWaitingAtItem()
+	{
+		_pauseTimer += Time.Delta;
+		if ( _pauseTimer >= PickupPauseTime )
+			_state = NPCState.PickingUp;
+	}
+
+	private void HandlePickingUp()
+	{
+		OnPickupStart?.Invoke();
+		TriggerPickupAnimation();
+
+		if ( _currentTargetItem != null && _currentTargetItem.IsValid() && HandBone != null )
+		{
+			_currentTargetItem.OnPickedUp( HandBone );
+			_heldItems.Add( _currentTargetItem );
+		}
+
+		_currentTargetItem = null;
+
+		bool shouldCheckout = _heldItems.Count >= BatchSize || (!IsCollecting && _heldItems.Count > 0);
+
+		if ( shouldCheckout && _counterSlots.Count > 0 )
+		{
+			_agent?.MoveTo( _counterSlots[0].WorldPosition );
+			_state = NPCState.MovingToCounter;
+		}
+		else if ( _heldItems.Count < BatchSize && IsCollecting )
+		{
+			_state = NPCState.Idle;
+		}
+		else
+		{
+			_state = NPCState.Idle;
+		}
+	}
+
+	private void HandleMovingToCounter()
+	{
+		if ( _agent == null ) return;
+
+		if ( !_hasStartedMoving )
+		{
+			float dist = _counterSlots.Count > 0 ? WorldPosition.Distance( _counterSlots[0].WorldPosition ) : 0f;
+			if ( dist > ReachDistance )
+				_hasStartedMoving = true;
+			else
+			{
+				_hasStartedMoving = false;
+				_state = NPCState.PlacingItem;
+				return;
+			}
+		}
+
+		if ( _hasStartedMoving && _agent.Velocity.LengthSquared < 1f )
+		{
+			_hasStartedMoving = false;
+			_state = NPCState.PlacingItem;
+		}
+	}
+
+	private void HandlePlacingItem()
+	{
+		OnPlaceStart?.Invoke();
+		TriggerPlaceAnimation();
+
+		if ( _counterSlots.Count == 0 )
+		{
+			PlaceIdCard();
+			_state = NPCState.WaitingForCheckout;
+			return;
+		}
+
+		var toPlace = new List<InteractableItem>( _heldItems );
+		var placed = new List<InteractableItem>();
+
+		foreach ( var item in toPlace )
+		{
+			if ( item == null || !item.IsValid() ) continue;
+
+			CounterSlot slot = GetAvailableCounterSlot();
+			if ( slot == null ) break;
+
+			item.GameObject.Enabled = true;
+			foreach ( var r in item.GameObject.GetComponentsInChildren<ModelRenderer>() )
+				r.Enabled = true;
+
+			var col = item.GetComponent<Collider>();
+			if ( col != null ) col.Enabled = true;
+
+			item.MarkAsDelivered();
+			slot.PlaceItem( item.GameObject );
+			_placedItems.Add( item.GameObject );
+			placed.Add( item );
+		}
+
+		foreach ( var p in placed )
+			_heldItems.Remove( p );
+
+		if ( _heldItems.Count > 0 )
+			return; // Stay in placing state, retry next tick
+
+		PlaceIdCard();
+		_state = NPCState.WaitingForCheckout;
+	}
+
+	private void HandleWaitingForCheckout()
+	{
+		if ( _hasCheckedOut )
+			GoToExit();
+	}
+
+	private void HandleMovingToExit()
+	{
+		if ( _agent == null ) return;
+
+		if ( !_hasStartedMoving )
+		{
+			if ( _exitPoint != null )
+			{
+				float dist = WorldPosition.Distance( _exitPoint.WorldPosition );
+				if ( dist > ReachDistance * 2f )
+					_hasStartedMoving = true;
+				else
+				{
+					DespawnNPC();
+					return;
+				}
+			}
+			else
+			{
+				DespawnNPC();
+				return;
+			}
+		}
+
+		if ( _hasStartedMoving && _agent.Velocity.LengthSquared < 1f )
+		{
+			_hasStartedMoving = false;
+			DespawnNPC();
+		}
+	}
+
+	// ── Helpers ───────────────────────────────────────────────────────
+
+	private void GoToExit()
+	{
+		CleanupIdCard();
+		if ( _exitPoint != null )
+		{
+			_agent?.MoveTo( _exitPoint.WorldPosition );
+			_state = NPCState.MovingToExit;
+		}
+		else
+		{
+			DespawnNPC();
+		}
+	}
+
+	private void ScanForItems()
+	{
+		if ( _heldItems.Count >= BatchSize ) return;
+
+		if ( _useShelfSlots )
+		{
+			ScanShelfSlots();
+			return;
+		}
+
+		// Sphere overlap for InteractableItems within detection radius
+		var tr = Scene.PhysicsWorld.Trace
+			.Sphere( DetectionRadius, WorldPosition, WorldPosition )
+			.Run();
+
+		// Fallback: search scene-wide
+		float nearest = float.MaxValue;
+		InteractableItem nearestItem = null;
+
+		foreach ( var item in Scene.GetAllComponents<InteractableItem>() )
+		{
+			if ( item.IsDelivered ) continue;
+			if ( WantedCategories.Count > 0 && !WantedCategories.Contains( item.ItemCategory ) ) continue;
+
+			float dist = WorldPosition.Distance( item.WorldPosition );
+			if ( dist > DetectionRadius ) continue;
+			if ( dist < nearest )
+			{
+				nearest = dist;
+				nearestItem = item;
+			}
+		}
+
+		if ( nearestItem != null )
+			NavigateTo( nearestItem );
+	}
+
+	private void ScanShelfSlots()
+	{
+		foreach ( var slot in _allowedShelfSlots )
+		{
+			if ( slot == null || !slot.IsValid() || !slot.HasItems ) continue;
+			if ( WantedCategories.Count > 0 && !WantedCategories.Contains( slot.AcceptedCategory ) ) continue;
+
+			// Get top item from slot
+			var item = slot.PeekTopItem();
+			if ( item == null || item.IsDelivered ) continue;
+
+			NavigateTo( item );
+			return;
+		}
+	}
+
+	private void NavigateTo( InteractableItem item )
+	{
+		_currentTargetItem = item;
+		_hasStartedMoving = false;
+		_agent?.MoveTo( item.WorldPosition );
+		_state = NPCState.MovingToItem;
+	}
+
+	private CounterSlot GetAvailableCounterSlot()
+	{
+		foreach ( var slot in _counterSlots )
+			if ( slot != null && slot.IsValid() && !slot.IsOccupied )
+				return slot;
+		return null;
+	}
+
+	private void PlaceIdCard()
+	{
+		if ( _hasPlacedIDCard || _idCardSlot == null || IdCardPrefab == null || NpcIdentity == null ) return;
+		_hasPlacedIDCard = true;
+		_idCardSlot.PlaceIDCard( IdCardPrefab, NpcIdentity );
+	}
+
+	private void CleanupIdCard()
+	{
+		if ( _idCardSlot != null )
+			_idCardSlot.RemoveIDCard();
+
+		if ( _spawnedIdCard != null && _spawnedIdCard.IsValid() )
+			_spawnedIdCard.Destroy();
+
+		_spawnedIdCard = null;
+	}
+
+	private void DespawnNPC()
+	{
+		FireExitEvent();
+		GameObject.Destroy();
+	}
+
+	private void FireExitEvent()
+	{
+		OnNPCExited?.Invoke( this );
+	}
+
+	protected override void OnDestroy()
+	{
+		CleanupIdCard();
+	}
+
+	// ── Animation RPCs ─────────────────────────────────────────────────
+
+	[Rpc.Broadcast]
+	private void TriggerPickupAnimation()
+	{
+		var anim = GetComponent<NPCAnimationController>();
+		anim?.TriggerPickup();
+	}
+
+	[Rpc.Broadcast]
+	private void TriggerPlaceAnimation()
+	{
+		var anim = GetComponent<NPCAnimationController>();
+		anim?.TriggerPlace();
+	}
+}

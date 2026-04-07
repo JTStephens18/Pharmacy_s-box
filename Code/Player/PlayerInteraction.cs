@@ -107,6 +107,7 @@ public sealed class PlayerInteraction : Component
 	{
 		return Scene.Trace
 			.Ray( Scene.Camera.WorldPosition, Scene.Camera.WorldPosition + Scene.Camera.WorldRotation.Forward * PickupRange )
+			.IgnoreGameObjectHierarchy( GameObject )
 			.Run();
 	}
 

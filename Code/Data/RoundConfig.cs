@@ -18,7 +18,7 @@ public class QueueEntry
 /// GameResource defining the NPC queue for a single round/shift.
 /// Replaces Unity's RoundConfig ScriptableObject.
 /// </summary>
-[GameResource( "Round Config", "roundconfig", "Defines the NPC spawn queue and doppelganger settings for a shift", Icon = "settings" )]
+[GameResource( "Round Config", "rndcfg", "Defines the NPC spawn queue and doppelganger settings for a shift", Icon = "settings" )]
 public class RoundConfig : GameResource
 {
 	[Group( "NPC Pool" )]

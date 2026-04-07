@@ -8,7 +8,6 @@ public sealed class NPCAnimationController : Component
 {
 	private NPCController _controller;
 	private SkinnedModelRenderer _model;
-	private int _lastState = -1;
 
 	protected override void OnAwake()
 	{

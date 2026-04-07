@@ -87,7 +87,7 @@ public sealed class NPCSpawnManager : Component
 		var entry = _spawnQueue.Dequeue();
 		if ( !entry.Prefab.IsValid() ) return;
 
-		var npcGo = SceneUtility.Instantiate( entry.Prefab, new Transform( SpawnPoint.WorldPosition, SpawnPoint.WorldRotation, 1f ) );
+		var npcGo = entry.Prefab.Clone( new Transform( SpawnPoint.WorldPosition, SpawnPoint.WorldRotation, 1f ) );
 		npcGo.NetworkSpawn();
 
 		_activeNPC = npcGo.GetComponent<NPCController>();

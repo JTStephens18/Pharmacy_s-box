@@ -16,7 +16,7 @@ public sealed class IDCardSlot : Component
 		RemoveIDCard();
 		if ( !prefab.IsValid() || identity == null ) return;
 
-		_card = SceneUtility.Instantiate( prefab, WorldTransform );
+		_card = prefab.Clone( WorldTransform );
 		_card.NetworkSpawn();
 
 		var interaction = _card.GetComponent<IDCardInteraction>();

@@ -5,7 +5,7 @@ using Sandbox;
 /// Used by shelf slots to filter items and by NPCs to choose what to pick up.
 /// Replaces Unity's ItemCategory ScriptableObject.
 /// </summary>
-[GameResource( "Item Category", "itemcategory", "Defines an item type for shelf placement", Icon = "inventory_2" )]
+[GameResource( "Item Category", "itemcat", "Defines an item type for shelf placement", Icon = "inventory_2" )]
 public class ItemCategory : GameResource
 {
 	[Property] public string Description { get; set; } = "";

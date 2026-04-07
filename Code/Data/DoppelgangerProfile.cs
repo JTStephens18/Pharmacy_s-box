@@ -17,7 +17,7 @@ public enum DiscrepancyType
 /// GameResource defining a doppelganger's fake data and discrepancies.
 /// Replaces Unity's DoppelgangerProfile ScriptableObject.
 /// </summary>
-[GameResource( "Doppelganger Profile", "doppelganger", "Defines fake data overrides for a doppelganger NPC", Icon = "masks" )]
+[GameResource( "Doppelganger Profile", "doppel", "Defines fake data overrides for a doppelganger NPC", Icon = "masks" )]
 public class DoppelgangerProfile : GameResource
 {
 	[Group( "Discrepancies" )]

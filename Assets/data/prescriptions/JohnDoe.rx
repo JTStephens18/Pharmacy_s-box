@@ -1,0 +1,14 @@
+{
+  "MedicationName": "Ibuprofen",
+  "Quantity": 30,
+  "Dosage": "200 mg",
+  "PrescriberName": "Dr. James Holt",
+  "PrescriberNPI": "001",
+  "PrescriberSpecialty": "Cardiology",
+  "PrescriberAddress": "88 Medical Drive",
+  "PreviousFills": [
+    "2026-01-15: 30x 10mg"
+  ],
+  "__references": [],
+  "__version": 0
+}

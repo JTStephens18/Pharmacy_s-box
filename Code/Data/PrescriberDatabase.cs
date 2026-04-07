@@ -14,7 +14,7 @@ public class PrescriberEntry
 /// GameResource containing valid prescriber records for NPI lookup on the computer screen.
 /// Replaces Unity's PrescriberDatabase ScriptableObject.
 /// </summary>
-[GameResource( "Prescriber Database", "npidatabase", "List of valid prescribers for NPI verification", Icon = "local_hospital" )]
+[GameResource( "Prescriber Database", "npidb", "List of valid prescribers for NPI verification", Icon = "local_hospital" )]
 public class PrescriberDatabase : GameResource
 {
 	[Property] public List<PrescriberEntry> Prescribers { get; set; } = new();

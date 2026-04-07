@@ -5,7 +5,7 @@ using Sandbox;
 /// Displayed on the computer screen for verification.
 /// Replaces Unity's PrescriptionData ScriptableObject.
 /// </summary>
-[GameResource( "Prescription Data", "prescription", "Defines a patient's prescription details", Icon = "medication" )]
+[GameResource( "Prescription Data", "rx", "Defines a patient's prescription details", Icon = "medication" )]
 public class PrescriptionData : GameResource
 {
 	[Group( "Prescription" )]

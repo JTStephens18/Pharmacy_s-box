@@ -725,7 +725,149 @@
       "__version": 2,
       "__Prefab": "prefabs/player controller1.prefab",
       "__PrefabInstancePatch": {
-        "AddedObjects": [],
+        "AddedObjects": [
+          {
+            "Id": {
+              "Type": "Component",
+              "IdValue": "2b3aade2-d8bb-4590-84fd-6739b22e261a"
+            },
+            "Parent": {
+              "Type": "GameObject",
+              "IdValue": "91a77579-f004-4a5e-ab76-7605dc5d1d48"
+            },
+            "PreviousElement": null,
+            "ContainerProperty": "Components",
+            "IsContainerArray": true,
+            "Data": {
+              "__type": "Sandbox.NavMeshAgent",
+              "__guid": "2b3aade2-d8bb-4590-84fd-6739b22e261a",
+              "__enabled": true,
+              "Flags": 0,
+              "Acceleration": 120,
+              "AllowDefaultArea": true,
+              "AllowedAreas": [],
+              "AutoTraverseLinks": true,
+              "ForbiddenAreas": [],
+              "Height": 64,
+              "MaxSpeed": 120,
+              "OnComponentDestroy": null,
+              "OnComponentDisabled": null,
+              "OnComponentEnabled": null,
+              "OnComponentFixedUpdate": null,
+              "OnComponentStart": null,
+              "OnComponentUpdate": null,
+              "Radius": 16,
+              "Separation": 0.25,
+              "UpdatePosition": true,
+              "UpdateRotation": false
+            }
+          },
+          {
+            "Id": {
+              "Type": "Component",
+              "IdValue": "70909b97-5950-47fb-b364-7e56255f4cd7"
+            },
+            "Parent": {
+              "Type": "GameObject",
+              "IdValue": "91a77579-f004-4a5e-ab76-7605dc5d1d48"
+            },
+            "PreviousElement": {
+              "Type": "Component",
+              "IdValue": "2b3aade2-d8bb-4590-84fd-6739b22e261a"
+            },
+            "ContainerProperty": "Components",
+            "IsContainerArray": true,
+            "Data": {
+              "__type": "NPCController",
+              "__guid": "70909b97-5950-47fb-b364-7e56255f4cd7",
+              "__enabled": true,
+              "Flags": 0,
+              "AutoScan": true,
+              "BatchSize": 4,
+              "DetectionRadius": 500,
+              "HandBone": {
+                "_type": "gameobject",
+                "go": "5385db54-2aef-4e70-b026-09b479cb84a2"
+              },
+              "IdCardPrefab": null,
+              "IsCollecting": true,
+              "NpcIdentity": "data/npcs/johndoe.npcid",
+              "OnComponentDestroy": null,
+              "OnComponentDisabled": null,
+              "OnComponentEnabled": null,
+              "OnComponentFixedUpdate": null,
+              "OnComponentStart": null,
+              "OnComponentUpdate": null,
+              "PickupPauseTime": 0.5,
+              "Prescription": "data/prescriptions/johndoe.prescrip",
+              "ReachDistance": 40,
+              "ScanInterval": 1,
+              "WantedCategories": [
+                "data/items/medpack.itemcate"
+              ]
+            }
+          },
+          {
+            "Id": {
+              "Type": "Component",
+              "IdValue": "de96c2e8-891b-428e-b18a-9fa1afecce87"
+            },
+            "Parent": {
+              "Type": "GameObject",
+              "IdValue": "91a77579-f004-4a5e-ab76-7605dc5d1d48"
+            },
+            "PreviousElement": {
+              "Type": "Component",
+              "IdValue": "70909b97-5950-47fb-b364-7e56255f4cd7"
+            },
+            "ContainerProperty": "Components",
+            "IsContainerArray": true,
+            "Data": {
+              "__type": "NPCAnimationController",
+              "__guid": "de96c2e8-891b-428e-b18a-9fa1afecce87",
+              "__enabled": true,
+              "Flags": 0,
+              "OnComponentDestroy": null,
+              "OnComponentDisabled": null,
+              "OnComponentEnabled": null,
+              "OnComponentFixedUpdate": null,
+              "OnComponentStart": null,
+              "OnComponentUpdate": null
+            }
+          },
+          {
+            "Id": {
+              "Type": "Component",
+              "IdValue": "5cefe8fd-50de-4b95-91e9-f23006558db2"
+            },
+            "Parent": {
+              "Type": "GameObject",
+              "IdValue": "91a77579-f004-4a5e-ab76-7605dc5d1d48"
+            },
+            "PreviousElement": {
+              "Type": "Component",
+              "IdValue": "de96c2e8-891b-428e-b18a-9fa1afecce87"
+            },
+            "ContainerProperty": "Components",
+            "IsContainerArray": true,
+            "Data": {
+              "__type": "NPCDialogueTrigger",
+              "__guid": "5cefe8fd-50de-4b95-91e9-f23006558db2",
+              "__enabled": true,
+              "Flags": 0,
+              "DialogueFiles": [],
+              "InfoDialogues": [],
+              "MaxQuestions": 5,
+              "OnComponentDestroy": null,
+              "OnComponentDisabled": null,
+              "OnComponentEnabled": null,
+              "OnComponentFixedUpdate": null,
+              "OnComponentStart": null,
+              "OnComponentUpdate": null,
+              "PlayerRange": 200
+            }
+          }
+        ],
         "RemovedObjects": [],
         "PropertyOverrides": [],
         "MovedObjects": []
@@ -737,8 +879,144 @@
       "__version": 2,
       "__Prefab": "prefabs/player.prefab",
       "__PrefabInstancePatch": {
-        "AddedObjects": [],
-        "RemovedObjects": [],
+        "AddedObjects": [
+          {
+            "Id": {
+              "Type": "GameObject",
+              "IdValue": "285bc003-a99d-4941-bdc9-b97da22b8077"
+            },
+            "Parent": {
+              "Type": "GameObject",
+              "IdValue": "cd396668-a4ab-4217-8f15-0c946b846b5c"
+            },
+            "PreviousElement": {
+              "Type": "GameObject",
+              "IdValue": "a58f4323-c4b4-4cb7-9b82-1a353aab8064"
+            },
+            "ContainerProperty": "Children",
+            "IsContainerArray": true,
+            "Data": {
+              "__guid": "285bc003-a99d-4941-bdc9-b97da22b8077",
+              "__version": 2,
+              "Flags": 1,
+              "Name": "Colliders",
+              "Position": "0,0,0",
+              "Rotation": "0,0,0,1",
+              "Scale": "1,1,1",
+              "Tags": "",
+              "Enabled": true,
+              "NetworkMode": 2,
+              "NetworkFlags": 0,
+              "NetworkOrphaned": 0,
+              "NetworkTransmit": true,
+              "OwnerTransfer": 1,
+              "Components": [],
+              "Children": []
+            }
+          },
+          {
+            "Id": {
+              "Type": "Component",
+              "IdValue": "8d7a6bbb-6024-481c-8472-4ddb0f3049e0"
+            },
+            "Parent": {
+              "Type": "GameObject",
+              "IdValue": "285bc003-a99d-4941-bdc9-b97da22b8077"
+            },
+            "PreviousElement": null,
+            "ContainerProperty": "Components",
+            "IsContainerArray": true,
+            "Data": {
+              "__type": "Sandbox.CapsuleCollider",
+              "__guid": "8d7a6bbb-6024-481c-8472-4ddb0f3049e0",
+              "__enabled": true,
+              "Flags": 1,
+              "ColliderFlags": 0,
+              "Elasticity": null,
+              "End": "0,0,36",
+              "Friction": 0,
+              "IsTrigger": false,
+              "OnComponentDestroy": null,
+              "OnComponentDisabled": null,
+              "OnComponentEnabled": null,
+              "OnComponentFixedUpdate": null,
+              "OnComponentStart": null,
+              "OnComponentUpdate": null,
+              "OnObjectTriggerEnter": null,
+              "OnObjectTriggerExit": null,
+              "OnTriggerEnter": null,
+              "OnTriggerExit": null,
+              "Radius": 11.313708,
+              "RollingResistance": null,
+              "Start": "0,0,60.68629",
+              "Static": false,
+              "Surface": null,
+              "SurfaceVelocity": "0,0,0"
+            }
+          },
+          {
+            "Id": {
+              "Type": "Component",
+              "IdValue": "f56012f7-c109-4640-843b-8f705f5913c4"
+            },
+            "Parent": {
+              "Type": "GameObject",
+              "IdValue": "285bc003-a99d-4941-bdc9-b97da22b8077"
+            },
+            "PreviousElement": {
+              "Type": "Component",
+              "IdValue": "8d7a6bbb-6024-481c-8472-4ddb0f3049e0"
+            },
+            "ContainerProperty": "Components",
+            "IsContainerArray": true,
+            "Data": {
+              "__type": "Sandbox.BoxCollider",
+              "__guid": "f56012f7-c109-4640-843b-8f705f5913c4",
+              "__enabled": true,
+              "Flags": 1,
+              "Center": "0,0,18",
+              "ColliderFlags": 0,
+              "Elasticity": null,
+              "Friction": 0,
+              "IsTrigger": false,
+              "OnComponentDestroy": null,
+              "OnComponentDisabled": null,
+              "OnComponentEnabled": null,
+              "OnComponentFixedUpdate": null,
+              "OnComponentStart": null,
+              "OnComponentUpdate": null,
+              "OnObjectTriggerEnter": null,
+              "OnObjectTriggerExit": null,
+              "OnTriggerEnter": null,
+              "OnTriggerExit": null,
+              "RollingResistance": null,
+              "Scale": "16,16,36",
+              "Static": false,
+              "Surface": null,
+              "SurfaceVelocity": "0,0,0"
+            }
+          }
+        ],
+        "RemovedObjects": [
+          {
+            "Id": {
+              "Type": "GameObject",
+              "IdValue": "66d2b94d-7ad3-4d50-9635-6fdbf4c09354"
+            }
+          },
+          {
+            "Id": {
+              "Type": "Component",
+              "IdValue": "080cb6ff-da56-434e-b3e5-9f2f72ff6754"
+            }
+          },
+          {
+            "Id": {
+              "Type": "Component",
+              "IdValue": "25ce11d4-8e4e-4d13-8a03-9bc2b6563cca"
+            }
+          }
+        ],
         "PropertyOverrides": [
           {
             "Target": {
@@ -747,6 +1025,17 @@
             },
             "Property": "Position",
             "Value": "19.3769,67.3501,22.89044"
+          },
+          {
+            "Target": {
+              "Type": "Component",
+              "IdValue": "122c87e6-a1cd-49d5-a5ee-456522f18daa"
+            },
+            "Property": "ColliderObject",
+            "Value": {
+              "_type": "gameobject",
+              "go": "285bc003-a99d-4941-bdc9-b97da22b8077"
+            }
           }
         ],
         "MovedObjects": []
@@ -899,10 +1188,32 @@
               "OnComponentFixedUpdate": null,
               "OnComponentStart": null,
               "OnComponentUpdate": null,
-              "SpawnPoint": null
+              "SpawnPoint": {
+                "_type": "gameobject",
+                "go": "9a1e5a40-99c9-4574-85cb-854f4a109f28"
+              }
             }
           ],
-          "Children": []
+          "Children": [
+            {
+              "__guid": "9a1e5a40-99c9-4574-85cb-854f4a109f28",
+              "__version": 2,
+              "Flags": 0,
+              "Name": "NPCSpawnPoint",
+              "Position": "0,-226.2869,-40.27621",
+              "Rotation": "0,0,0,1",
+              "Scale": "1,1,1",
+              "Tags": "",
+              "Enabled": true,
+              "NetworkMode": 2,
+              "NetworkFlags": 0,
+              "NetworkOrphaned": 0,
+              "NetworkTransmit": true,
+              "OwnerTransfer": 1,
+              "Components": [],
+              "Children": []
+            }
+          ]
         },
         {
           "__guid": "6224f2ce-e2fa-4ae9-9811-b26015c3b5ba",
@@ -943,6 +1254,17 @@
                 "component_id": "c1020c53-b362-4d20-bdb4-7e7ec0807363",
                 "go": "c37aa077-1a18-4f6e-8151-572290e57bc5",
                 "component_type": "NPCSpawnManager"
+              },
+              "TestNpcPrefabs": [
+                {
+                  "_type": "gameobject",
+                  "prefab": "prefabs/johndoe.prefab"
+                }
+              ],
+              "TestSpawnOnStart": true,
+              "TestSpawnPoint": {
+                "_type": "gameobject",
+                "go": "9a1e5a40-99c9-4574-85cb-854f4a109f28"
               }
             }
           ],
@@ -1036,7 +1358,7 @@
     "GameObjectSystems": {
       "Sandbox.Clutter.ClutterGridSystem": {
         "Storage": {
-          "$blob": "5d5ce635-23f5-4779-93d4-5d25f4e647b6"
+          "$blob": "59784b19-8aa1-4cd0-a7df-ae1647cd10f7"
         }
       },
       "Sandbox.MovieMaker.MovieRecorderSystem": {

@@ -6,7 +6,9 @@
     }
   ],
   "QueueEntries": [],
-  "DoppelgangerPool": [],
+  "DoppelgangerPool": [
+    "data/doppelgangers/johndoe.doppel"
+  ],
   "RandomDoppelgangerCount": 1,
   "__references": [],
   "__version": 0

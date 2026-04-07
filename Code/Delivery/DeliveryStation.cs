@@ -33,7 +33,7 @@ public sealed class DeliveryStation : Component
 		var spawnPos = SpawnPoint != null ? SpawnPoint.WorldPosition : WorldPosition;
 		var spawnRot = SpawnPoint != null ? SpawnPoint.WorldRotation : WorldRotation;
 
-		var box = SceneUtility.Instantiate( InventoryBoxPrefab, new Transform( spawnPos, spawnRot, 1f ) );
+		var box = InventoryBoxPrefab.Clone( new Transform( spawnPos, spawnRot, 1f ) );
 		box.NetworkSpawn();
 	}
 

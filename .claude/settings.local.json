@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Read(//c/Users/JTSte/Unity/Pharmacy/Pharmacy/Assets/Scripts/**)",
-      "Read(//c/Users/JTSte/Unity/Pharmacy/Pharmacy/Assets/Scripts/NPC/**)"
+      "Read(//c/Users/JTSte/Unity/Pharmacy/Pharmacy/Assets/Scripts/NPC/**)",
+      "Read(//c/Users/JTSte/s box/my_project/Assets/**)"
     ]
   }
 }

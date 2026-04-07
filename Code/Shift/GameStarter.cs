@@ -24,6 +24,8 @@ public sealed class GameStarter : Component
 	{
 		if ( !Networking.IsHost ) return;
 
+		LogServerInfo();
+
 		if ( TestSpawnOnStart )
 		{
 			SpawnTestNpcs();
@@ -38,6 +40,24 @@ public sealed class GameStarter : Component
 		{
 			SpawnManager.StartNPCSpawning( RoundConfig );
 		}
+	}
+
+	private static void LogServerInfo()
+	{
+		var connections = Connection.All;
+
+		Log.Info( "╔══════════════════════════════════╗" );
+		Log.Info( "║       SERVER STARTED             ║" );
+		Log.Info( "╚══════════════════════════════════╝" );
+		Log.Info( $"  Host SteamId: {Connection.Local?.SteamId}" );
+		Log.Info( $"  Players     : {connections.Count()}" );
+
+		foreach ( var conn in connections )
+		{
+			Log.Info( $"  Connected   : [{conn.SteamId}] {conn.DisplayName}" );
+		}
+
+		Log.Info( "──────────────────────────────────" );
 	}
 
 	private void SpawnTestNpcs()

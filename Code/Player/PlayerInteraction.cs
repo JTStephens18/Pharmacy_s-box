@@ -20,10 +20,24 @@ public sealed class PlayerInteraction : Component
 	[Group( "Throw" )]
 	[Property] public float ThrowForce { get; set; } = 800f;
 
+	[Group( "Hold Scale" )]
+	[Property] public float ScaleAnimSpeed { get; set; } = 8f;
+
 	// ── Held object state ─────────────────────────────────────────────
 	private GameObject _heldObject;
 	private Rigidbody _heldRb;
 	private Collider _heldCol;
+	private Vector3 _originalScale;
+	private Vector3 _targetScale;
+
+	// ── Released object scale lerp ────────────────────────────────────
+	// Tracks objects that were dropped and are still animating back to their original size
+	private struct ScaleRestoreEntry
+	{
+		public GameObject Object;
+		public Vector3 TargetScale;
+	}
+	private readonly System.Collections.Generic.List<ScaleRestoreEntry> _restoring = new();
 
 	// ── Detected interactables ────────────────────────────────────────
 	private IPlaceable _currentPlaceable;
@@ -64,6 +78,9 @@ public sealed class PlayerInteraction : Component
 		// Keep held object glued to camera
 		if ( IsHolding )
 			UpdateHeldPosition();
+
+		// Lerp released objects back to their original scale
+		UpdateRestoreScales();
 	}
 
 	// ── Detection ────────────────────────────────────────────────────
@@ -151,6 +168,10 @@ public sealed class PlayerInteraction : Component
 		var go = tr.GameObject;
 		if ( go == null ) return;
 
+		// Must have a HoldableItem component
+		var holdable = go.GetComponent<HoldableItem>() ?? go.GetComponentInParent<HoldableItem>();
+		if ( holdable == null ) return;
+
 		// Must have a Rigidbody and not be a static/kinematic station
 		var rb = go.GetComponent<Rigidbody>() ?? go.GetComponentInParent<Rigidbody>();
 		if ( rb == null ) return;
@@ -168,6 +189,15 @@ public sealed class PlayerInteraction : Component
 		_heldObject = go;
 		_heldRb = go.GetComponent<Rigidbody>();
 		_heldCol = go.GetComponent<Collider>();
+
+		// Record original scale and determine held scale target
+		_originalScale = go.LocalScale;
+		var holdable = go.GetComponent<HoldableItem>() ?? go.GetComponentInParent<HoldableItem>();
+		float holdScalar = holdable != null ? holdable.HoldScale : 1f;
+		_targetScale = _originalScale * holdScalar;
+
+		// Remove from restore list if picked up again before it finished restoring
+		_restoring.RemoveAll( e => e.Object == go );
 
 		// Disable physics while held
 		if ( _heldRb != null )
@@ -204,6 +234,31 @@ public sealed class PlayerInteraction : Component
 			PickupSmoothSpeed * Time.Delta
 		);
 		_heldObject.WorldRotation = Scene.Camera.WorldRotation * rot.ToRotation();
+
+		// Animate scale toward held target
+		_heldObject.LocalScale = Vector3.Lerp( _heldObject.LocalScale, _targetScale, ScaleAnimSpeed * Time.Delta );
+	}
+
+	private void UpdateRestoreScales()
+	{
+		for ( int i = _restoring.Count - 1; i >= 0; i-- )
+		{
+			var entry = _restoring[i];
+			if ( !entry.Object.IsValid() )
+			{
+				_restoring.RemoveAt( i );
+				continue;
+			}
+
+			entry.Object.LocalScale = Vector3.Lerp( entry.Object.LocalScale, entry.TargetScale, ScaleAnimSpeed * Time.Delta );
+
+			// Close enough — snap and stop tracking
+			if ( entry.Object.LocalScale.Distance( entry.TargetScale ) < 0.001f )
+			{
+				entry.Object.LocalScale = entry.TargetScale;
+				_restoring.RemoveAt( i );
+			}
+		}
 	}
 
 	// ── Release ───────────────────────────────────────────────────────
@@ -229,6 +284,10 @@ public sealed class PlayerInteraction : Component
 		if ( _heldRb != null )
 			_heldRb.MotionEnabled = true;
 
+		// Animate scale back to original
+		if ( _heldObject.IsValid() && _heldObject.LocalScale != _originalScale )
+			_restoring.Add( new ScaleRestoreEntry { Object = _heldObject, TargetScale = _originalScale } );
+
 		_heldObject = null;
 		_heldRb = null;
 		_heldCol = null;
@@ -242,6 +301,7 @@ public sealed class PlayerInteraction : Component
 		_heldObject = null;
 		_heldRb = null;
 		_heldCol = null;
+		_restoring.RemoveAll( e => e.Object == obj );
 		obj.Destroy();
 	}
 

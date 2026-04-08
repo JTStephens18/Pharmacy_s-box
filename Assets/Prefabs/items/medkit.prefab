@@ -100,6 +100,7 @@
         "Flags": 0,
         "HoldOffset": "24.67001,-10.38999,-12.38002",
         "HoldRotation": "0,0,0",
+        "HoldScale": 0.6,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -140,6 +141,20 @@
         "OverrideMassCenter": false,
         "RigidbodyFlags": 0,
         "StartAsleep": false
+      },
+      {
+        "__type": "InteractableItem",
+        "__guid": "5802126a-c116-4a56-ab7b-b808bb5aa124",
+        "__enabled": true,
+        "Flags": 0,
+        "GrabTarget": null,
+        "ItemCategory": "data/items/medpack.itemcat",
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null
       }
     ],
     "Children": [],

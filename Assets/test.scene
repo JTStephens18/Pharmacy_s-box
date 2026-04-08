@@ -721,65 +721,6 @@
       "Children": []
     },
     {
-      "__guid": "a125fed9-12e8-49da-945b-e4f6eb9a50bc",
-      "__version": 2,
-      "__Prefab": "prefabs/player controller1.prefab",
-      "__PrefabInstancePatch": {
-        "AddedObjects": [],
-        "RemovedObjects": [],
-        "PropertyOverrides": [],
-        "MovedObjects": []
-      },
-      "__PrefabIdToInstanceId": {}
-    },
-    {
-      "__guid": "da156b58-c729-4faf-b104-0ab8238b0eef",
-      "__version": 2,
-      "__Prefab": "prefabs/player.prefab",
-      "__PrefabInstancePatch": {
-        "AddedObjects": [],
-        "RemovedObjects": [],
-        "PropertyOverrides": [
-          {
-            "Target": {
-              "Type": "GameObject",
-              "IdValue": "cd396668-a4ab-4217-8f15-0c946b846b5c"
-            },
-            "Property": "Position",
-            "Value": "19.3769,67.3501,22.89044"
-          },
-          {
-            "Target": {
-              "Type": "Component",
-              "IdValue": "91666407-e7ce-42a1-819a-68bca701919d"
-            },
-            "Property": "ScaleAnimSpeed",
-            "Value": 8
-          }
-        ],
-        "MovedObjects": []
-      },
-      "__PrefabIdToInstanceId": {
-        "cd396668-a4ab-4217-8f15-0c946b846b5c": "da156b58-c729-4faf-b104-0ab8238b0eef",
-        "122c87e6-a1cd-49d5-a5ee-456522f18daa": "b306c119-7b1e-4f5c-b7ee-77bb54f08f35",
-        "52ce3cf0-e93b-4f42-8031-1fb0b1a5f431": "99a02e16-5d90-4ff8-871d-50fba0b94b1a",
-        "4bb00a85-6920-4e28-8abe-2bef078c9b3a": "9ff9d236-e828-430d-8c62-8e9813c942e5",
-        "5172ea89-7095-4b41-8f7e-801775282d88": "d4ca841a-07a9-4161-ba1e-6f146dfe4dc0",
-        "d8a014f4-2297-4dc1-9a70-2ae3a2a26b11": "cc9e65fe-fa23-46cb-8857-a9668311e79c",
-        "b30642db-cec9-4a4e-9821-011dbc5d9ddb": "fa47cac6-c838-41f7-845c-f0f1a2581217",
-        "713d60fd-5b9d-407b-a9ab-fa785d65ebda": "97b5a152-11b9-43d3-9ebd-cf2b24df8c5e",
-        "91666407-e7ce-42a1-819a-68bca701919d": "702cb01a-f724-4692-9653-f00b52dcb59a",
-        "a58f4323-c4b4-4cb7-9b82-1a353aab8064": "9f328e7b-695c-4464-81f6-c79236e39e6c",
-        "82bd9542-0ac5-4948-8f64-8c1f11273c9d": "f6e59759-c586-4852-b432-bfe24d77bdfa",
-        "929ecfe1-baa7-45f8-9797-7c001ea86e31": "414720aa-3de5-40b0-af9b-fa28bef4397d",
-        "1da7f378-66c5-49c8-9771-4fe516e6cb89": "aa10ed36-1bd4-47fc-8936-9cdcd0a9c7f8",
-        "cc77bebd-14a5-4545-894c-fe3c5dceb7da": "2c1ff121-f572-47a0-bf91-821a28d2270a",
-        "7b33957f-530d-4a5d-886e-a0d5b7e971ec": "285bc003-a99d-4941-bdc9-b97da22b8077",
-        "59621f49-4cd0-4324-9b48-2f20dd8953d7": "8d7a6bbb-6024-481c-8472-4ddb0f3049e0",
-        "4c8b1706-ed96-40ff-9ff7-f6aff630ad1f": "f56012f7-c109-4640-843b-8f705f5913c4"
-      }
-    },
-    {
       "__guid": "15edcd90-7cb7-4c57-be64-6731c3997104",
       "__version": 2,
       "Flags": 0,
@@ -852,7 +793,7 @@
               "__enabled": true,
               "Flags": 0,
               "DawnDuration": 5,
-              "DefaultRoundConfig": "data/round_configs/defaultroundconfig.roundcon",
+              "DefaultRoundConfig": "data/round_configs/new round config.rndcfg",
               "NightDuration": 120,
               "OnComponentDestroy": null,
               "OnComponentDisabled": null,
@@ -964,7 +905,7 @@
               "OnComponentFixedUpdate": null,
               "OnComponentStart": null,
               "OnComponentUpdate": null,
-              "RoundConfig": "data/round_configs/defaultroundconfig.roundcon",
+              "RoundConfig": "data/round_configs/new round config.rndcfg",
               "ShiftManagerRef": {
                 "_type": "component",
                 "component_id": "c2934b2f-7b28-4d96-a0df-5126e37b827b",
@@ -1055,6 +996,132 @@
             }
           ],
           "Children": []
+        },
+        {
+          "__guid": "0f732459-e118-4fc3-a3d5-766de277a277",
+          "__version": 2,
+          "Flags": 0,
+          "Name": "PlayerSpawner",
+          "Position": "0,0,0",
+          "Rotation": "0,0,0,1",
+          "Scale": "1,1,1",
+          "Tags": "",
+          "Enabled": true,
+          "NetworkMode": 1,
+          "NetworkFlags": 0,
+          "NetworkOrphaned": 0,
+          "NetworkTransmit": true,
+          "OwnerTransfer": 1,
+          "Components": [
+            {
+              "__type": "PlayerSpawner",
+              "__guid": "4c4bbaa4-c9b0-4b7b-841f-4f2000fef68e",
+              "__enabled": true,
+              "Flags": 0,
+              "OnComponentDestroy": null,
+              "OnComponentDisabled": null,
+              "OnComponentEnabled": null,
+              "OnComponentFixedUpdate": null,
+              "OnComponentStart": null,
+              "OnComponentUpdate": null,
+              "PlayerPrefab": {
+                "_type": "gameobject",
+                "prefab": "prefabs/player.prefab"
+              },
+              "SpawnPoints": [
+                {
+                  "_type": "gameobject",
+                  "go": "455aa303-6b87-4d3b-a816-f0a5f6fe062e"
+                },
+                {
+                  "_type": "gameobject",
+                  "go": "a68b9107-c10b-483c-98c7-903beb73c983"
+                },
+                {
+                  "_type": "gameobject",
+                  "go": "89f5cade-4e4b-4fa1-9b81-b0f510dc1464"
+                },
+                {
+                  "_type": "gameobject",
+                  "go": "def18bda-7fec-45e1-a962-1b642cc2ec34"
+                }
+              ]
+            }
+          ],
+          "Children": [
+            {
+              "__guid": "455aa303-6b87-4d3b-a816-f0a5f6fe062e",
+              "__version": 2,
+              "Flags": 0,
+              "Name": "SpawnPoint1",
+              "Position": "0,0,0",
+              "Rotation": "0,0,0,1",
+              "Scale": "1,1,1",
+              "Tags": "",
+              "Enabled": true,
+              "NetworkMode": 2,
+              "NetworkFlags": 0,
+              "NetworkOrphaned": 0,
+              "NetworkTransmit": true,
+              "OwnerTransfer": 1,
+              "Components": [],
+              "Children": []
+            },
+            {
+              "__guid": "a68b9107-c10b-483c-98c7-903beb73c983",
+              "__version": 2,
+              "Flags": 0,
+              "Name": "SpawnPoint2",
+              "Position": "0,0,0",
+              "Rotation": "0,0,0,1",
+              "Scale": "1,1,1",
+              "Tags": "",
+              "Enabled": true,
+              "NetworkMode": 2,
+              "NetworkFlags": 0,
+              "NetworkOrphaned": 0,
+              "NetworkTransmit": true,
+              "OwnerTransfer": 1,
+              "Components": [],
+              "Children": []
+            },
+            {
+              "__guid": "89f5cade-4e4b-4fa1-9b81-b0f510dc1464",
+              "__version": 2,
+              "Flags": 0,
+              "Name": "SpawnPoint3",
+              "Position": "0,0,0",
+              "Rotation": "0,0,0,1",
+              "Scale": "1,1,1",
+              "Tags": "",
+              "Enabled": true,
+              "NetworkMode": 2,
+              "NetworkFlags": 0,
+              "NetworkOrphaned": 0,
+              "NetworkTransmit": true,
+              "OwnerTransfer": 1,
+              "Components": [],
+              "Children": []
+            },
+            {
+              "__guid": "def18bda-7fec-45e1-a962-1b642cc2ec34",
+              "__version": 2,
+              "Flags": 0,
+              "Name": "SpawnPoint4",
+              "Position": "0,0,0",
+              "Rotation": "0,0,0,1",
+              "Scale": "1,1,1",
+              "Tags": "",
+              "Enabled": true,
+              "NetworkMode": 2,
+              "NetworkFlags": 0,
+              "NetworkOrphaned": 0,
+              "NetworkTransmit": true,
+              "OwnerTransfer": 1,
+              "Components": [],
+              "Children": []
+            }
+          ]
         }
       ]
     },
@@ -1309,14 +1376,6 @@
             },
             "Property": "HoldOffset",
             "Value": "24.67001,-10.38999,-12.38002"
-          },
-          {
-            "Target": {
-              "Type": "Component",
-              "IdValue": "f619479b-59b5-402b-bf7e-62f30f9c40a9"
-            },
-            "Property": "HoldScale",
-            "Value": 0.6
           }
         ],
         "MovedObjects": []
@@ -1348,14 +1407,6 @@
             },
             "Property": "Position",
             "Value": "18.20802,-44.01241,19.13386"
-          },
-          {
-            "Target": {
-              "Type": "Component",
-              "IdValue": "911c2c55-5663-43fe-9df3-9aa6d7859e35"
-            },
-            "Property": "HoldScale",
-            "Value": 0.6
           }
         ],
         "MovedObjects": []
@@ -1454,13 +1505,13 @@
       "CustomBounds": false
     },
     "GameObjectSystems": {
-      "Sandbox.Clutter.ClutterGridSystem": {
-        "Storage": {
-          "$blob": "4e0cdb68-629a-4773-8b22-9fe1fbee3246"
-        }
-      },
       "Sandbox.MovieMaker.MovieRecorderSystem": {
         "DisableClientRecording": false
+      },
+      "Sandbox.Clutter.ClutterGridSystem": {
+        "Storage": {
+          "$blob": "f7d77a7b-9780-4c32-8ef7-7900ffee626b"
+        }
       }
     }
   },

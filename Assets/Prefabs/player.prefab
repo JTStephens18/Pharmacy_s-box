@@ -220,6 +220,7 @@
         "OnComponentUpdate": null,
         "PickupRange": 200,
         "PickupSmoothSpeed": 12,
+        "ScaleAnimSpeed": 8,
         "ThrowForce": 800
       }
     ],

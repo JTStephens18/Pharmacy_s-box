@@ -1,6 +1,6 @@
 {
   "Description": "MedPack",
-  "Prefab": null,
+  "Prefab": "prefabs/items/medkit.prefab",
   "ShelfRotationOffset": "0,0,0",
   "__references": [],
   "__version": 0

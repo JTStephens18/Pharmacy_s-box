@@ -3,7 +3,10 @@
     "allow": [
       "Read(//c/Users/JTSte/Unity/Pharmacy/Pharmacy/Assets/Scripts/**)",
       "Read(//c/Users/JTSte/Unity/Pharmacy/Pharmacy/Assets/Scripts/NPC/**)",
-      "Read(//c/Users/JTSte/s box/my_project/Assets/**)"
+      "Read(//c/Users/JTSte/s box/my_project/Assets/**)",
+      "Bash(find \"C:\\\\Users\\\\JTSte\\\\s&box\\\\sbox-docs\" -name \"*.md\" -type f -exec grep -l \"WorldPanel\\\\|world.*panel\" {} \\\\;)",
+      "Bash(find \"C:\\\\Users\\\\JTSte\\\\s&box\\\\sbox-docs\" -name \"*.md\" -type f -exec grep -l \"Code\\\\|Assets\\\\|project.*structure\\\\|folder\\\\|directory\" {} \\\\;)",
+      "Bash(xargs grep:*)"
     ]
   }
 }

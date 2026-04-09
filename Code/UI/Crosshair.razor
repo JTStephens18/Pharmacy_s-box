@@ -1,0 +1,14 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits PanelComponent
+
+<root>
+    <div class="crosshair">
+        <div class="crosshair-dot"></div>
+    </div>
+</root>
+
+@code
+{
+    protected override int BuildHash() => 1;
+}

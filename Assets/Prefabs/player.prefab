@@ -221,6 +221,7 @@
         "PickupRange": 200,
         "PickupSmoothSpeed": 12,
         "ScaleAnimSpeed": 8,
+        "ShowDebugGizmos": false,
         "ThrowForce": 800
       }
     ],
@@ -431,6 +432,24 @@
             "SurfaceVelocity": "0,0,0"
           }
         ],
+        "Children": []
+      },
+      {
+        "__guid": "f1456306-69e3-477b-806f-a64351590cef",
+        "__version": 2,
+        "Flags": 0,
+        "Name": "PlayerUI",
+        "Position": "0,0,0",
+        "Rotation": "0,0,0,1",
+        "Scale": "1,1,1",
+        "Tags": "",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "NetworkFlags": 0,
+        "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
+        "OwnerTransfer": 1,
+        "Components": [],
         "Children": []
       }
     ],

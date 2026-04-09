@@ -59,6 +59,47 @@
         },
         "Tint": "1,1,1,1",
         "UseAnimGraph": true
+      },
+      {
+        "__type": "NPCController",
+        "__guid": "acb188cb-cd45-4da9-9914-c586ec7b55d9",
+        "__enabled": true,
+        "Flags": 0,
+        "AutoScan": true,
+        "BatchSize": 1,
+        "DetectionRadius": 500,
+        "HandBone": {
+          "_type": "gameobject",
+          "go": "5385db54-2aef-4e70-b026-09b479cb84a2"
+        },
+        "IdCardPrefab": null,
+        "IsCollecting": true,
+        "NpcIdentity": "data/npcs/johndoe.npcid",
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "PickupPauseTime": 0.5,
+        "Prescription": "data/prescriptions/johndoe.rx",
+        "ReachDistance": 40,
+        "ScanInterval": 1,
+        "WantedCategories": [
+          "data/items/medpack.itemcat"
+        ]
+      },
+      {
+        "__type": "NPCAnimationController",
+        "__guid": "238c7b99-49d2-487b-85fa-d2d8922c9ebe",
+        "__enabled": true,
+        "Flags": 0,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null
       }
     ],
     "Children": [

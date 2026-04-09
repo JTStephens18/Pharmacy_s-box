@@ -19,6 +19,8 @@ public sealed class GameStarter : Component
 	[Property] public List<GameObject> TestNpcPrefabs { get; set; } = new();
 	[Group( "Test" )]
 	[Property] public GameObject TestSpawnPoint { get; set; }
+	[Group( "Test" )]
+	[Property] public NPCSpawnManager TestSpawnManager { get; set; }
 
 	protected override void OnStart()
 	{
@@ -70,6 +72,18 @@ public sealed class GameStarter : Component
 			if ( prefab == null || !prefab.IsValid() ) continue;
 			var npc = prefab.Clone( new Transform( spawnPos, spawnRot, 1f ) );
 			npc.NetworkSpawn();
+
+			// Inject scene references so NPC can navigate the full loop
+			if ( TestSpawnManager != null )
+			{
+				var controller = npc.GetComponent<NPCController>();
+				controller?.AssignSceneReferences(
+					TestSpawnManager.CounterSlots,
+					TestSpawnManager.ExitPoint,
+					TestSpawnManager.IdCardSlot,
+					TestSpawnManager.AllowedShelfSlots
+				);
+			}
 		}
 	}
 }

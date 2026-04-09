@@ -1,0 +1,298 @@
+{
+  "RootObject": {
+    "__guid": "1fee2cca-e5a8-4446-9de3-927c85b64e1a",
+    "__version": 2,
+    "Flags": 0,
+    "Name": "Shelf (1)",
+    "Position": "0,0,0",
+    "Rotation": "0,0,0,1",
+    "Scale": "1,1,1",
+    "Tags": "",
+    "Enabled": true,
+    "NetworkMode": 1,
+    "NetworkFlags": 0,
+    "NetworkOrphaned": 0,
+    "NetworkTransmit": true,
+    "OwnerTransfer": 1,
+    "Components": [
+      {
+        "__type": "ShelfSection",
+        "__guid": "dac58299-388f-4e39-a0bd-2ebe22ed03b1",
+        "__enabled": true,
+        "Flags": 0,
+        "AcceptedCategory": null,
+        "AutoFindSlots": true,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "PlacementPrompt": "Press E to Place",
+        "Slots": []
+      }
+    ],
+    "Children": [
+      {
+        "__guid": "248779c8-e356-43b1-903c-4d42888a890f",
+        "__version": 2,
+        "Flags": 0,
+        "Name": "SlotA",
+        "Position": "0,0,0",
+        "Rotation": "0,0,0,1",
+        "Scale": "1,1,1",
+        "Tags": "",
+        "Enabled": true,
+        "NetworkMode": 1,
+        "NetworkFlags": 0,
+        "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
+        "OwnerTransfer": 1,
+        "Components": [
+          {
+            "__type": "ShelfSlot",
+            "__guid": "5ae9ee0a-3a31-4637-8b45-5d134aee5b64",
+            "__enabled": true,
+            "Flags": 0,
+            "AcceptedCategory": "data/items/medpack.itemcat",
+            "ItemPlacements": [
+              {
+                "PositionOffset": "0,0,0",
+                "RotationOffset": "0,0,0",
+                "PlacedItem": null
+              },
+              {
+                "PositionOffset": "2.5,0,0",
+                "RotationOffset": "0,0,0",
+                "PlacedItem": null
+              }
+            ],
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "RequireHeldItem": true
+          }
+        ],
+        "Children": []
+      },
+      {
+        "__guid": "a64286ba-9be1-476a-90ef-832160935097",
+        "__version": 2,
+        "Flags": 0,
+        "Name": "SlotB",
+        "Position": "0,0,0",
+        "Rotation": "0,0,0,1",
+        "Scale": "1,1,1",
+        "Tags": "",
+        "Enabled": true,
+        "NetworkMode": 1,
+        "NetworkFlags": 0,
+        "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
+        "OwnerTransfer": 1,
+        "Components": [
+          {
+            "__type": "ShelfSlot",
+            "__guid": "05a87891-6096-4316-94dc-b995485aeafe",
+            "__enabled": true,
+            "Flags": 0,
+            "AcceptedCategory": null,
+            "ItemPlacements": [
+              {
+                "PositionOffset": "0,0,0",
+                "RotationOffset": "0,0,0",
+                "PlacedItem": null
+              }
+            ],
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "RequireHeldItem": true
+          }
+        ],
+        "Children": []
+      },
+      {
+        "__guid": "580fb9b3-4d4d-411a-ba1d-05b176a86460",
+        "__version": 2,
+        "Flags": 0,
+        "Name": "SlotC",
+        "Position": "0,0,0",
+        "Rotation": "0,0,0,1",
+        "Scale": "1,1,1",
+        "Tags": "",
+        "Enabled": true,
+        "NetworkMode": 1,
+        "NetworkFlags": 0,
+        "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
+        "OwnerTransfer": 1,
+        "Components": [
+          {
+            "__type": "ShelfSlot",
+            "__guid": "437ee0cc-1df1-4a70-80f1-2992f48ea158",
+            "__enabled": true,
+            "Flags": 0,
+            "AcceptedCategory": null,
+            "ItemPlacements": [
+              {
+                "PositionOffset": "0,0,0",
+                "RotationOffset": "0,0,0",
+                "PlacedItem": null
+              }
+            ],
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "RequireHeldItem": true
+          }
+        ],
+        "Children": []
+      },
+      {
+        "__guid": "0a5d8be4-8d08-4600-a9da-4d77947421e4",
+        "__version": 2,
+        "Flags": 0,
+        "Name": "ShelfUnit",
+        "Position": "0,0,0",
+        "Rotation": "0,0,0,1",
+        "Scale": "1,1,1",
+        "Tags": "",
+        "Enabled": true,
+        "NetworkMode": 1,
+        "NetworkFlags": 0,
+        "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
+        "OwnerTransfer": 1,
+        "Components": [
+          {
+            "__type": "Sandbox.Prop",
+            "__guid": "faacdb8e-b662-4473-8df4-4d91b03c417e",
+            "__enabled": true,
+            "Flags": 0,
+            "BodyGroups": 18446744073709551615,
+            "Health": 0,
+            "IsStatic": false,
+            "MaterialGroup": null,
+            "Model": "models/props/shop_shelves/shop_shelves.vmdl",
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "OnPropBreak": null,
+            "OnPropTakeDamage": null,
+            "StartAsleep": false,
+            "Tint": "1,1,1,1"
+          },
+          {
+            "__type": "Sandbox.ModelRenderer",
+            "__guid": "4b9dd5e0-6839-47c9-8bb9-f65d3d4c84ec",
+            "__enabled": true,
+            "Flags": 0,
+            "BodyGroups": 18446744073709551615,
+            "CreateAttachments": false,
+            "LodOverride": null,
+            "MaterialGroup": null,
+            "MaterialOverride": null,
+            "Materials": null,
+            "Model": "models/props/shop_shelves/shop_shelves.vmdl",
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "RenderOptions": {
+              "GameLayer": true,
+              "OverlayLayer": false,
+              "BloomLayer": false,
+              "AfterUILayer": false
+            },
+            "RenderType": "On",
+            "Tint": "1,1,1,1"
+          },
+          {
+            "__type": "Sandbox.ModelCollider",
+            "__guid": "6f43c8cb-8a6d-45d4-837c-c0b347a1708a",
+            "__enabled": true,
+            "Flags": 0,
+            "ColliderFlags": 0,
+            "Elasticity": null,
+            "Friction": null,
+            "IsTrigger": false,
+            "Model": "models/props/shop_shelves/shop_shelves.vmdl",
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "OnObjectTriggerEnter": null,
+            "OnObjectTriggerExit": null,
+            "OnTriggerEnter": null,
+            "OnTriggerExit": null,
+            "RollingResistance": null,
+            "Static": false,
+            "Surface": null,
+            "SurfaceVelocity": "0,0,0"
+          },
+          {
+            "__type": "Sandbox.Rigidbody",
+            "__guid": "2b88c799-6ffd-4413-a77b-8954563da670",
+            "__enabled": true,
+            "Flags": 0,
+            "AngularDamping": 0,
+            "EnableImpactDamage": true,
+            "EnhancedCcd": false,
+            "Gravity": true,
+            "GravityScale": 1,
+            "ImpactDamage": 0,
+            "LinearDamping": 0,
+            "Locking": {
+              "X": false,
+              "Y": false,
+              "Z": false,
+              "Pitch": false,
+              "Yaw": false,
+              "Roll": false
+            },
+            "MassCenterOverride": "0,0,0",
+            "MassOverride": 0,
+            "MinImpactDamageSpeed": 500,
+            "MotionEnabled": true,
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "OverrideMassCenter": false,
+            "RigidbodyFlags": 0,
+            "StartAsleep": false
+          }
+        ],
+        "Children": []
+      }
+    ]
+  },
+  "ResourceVersion": 2,
+  "ShowInMenu": false,
+  "MenuPath": null,
+  "MenuIcon": null,
+  "DontBreakAsTemplate": false,
+  "__references": [
+    "fish.shop_shelves#105384"
+  ],
+  "__version": 2
+}

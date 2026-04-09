@@ -3,7 +3,7 @@
     "__guid": "c78a87a4-dd19-43f2-b9b0-40a7ba9b4d85",
     "__version": 2,
     "Flags": 0,
-    "Name": "InventoryBox",
+    "Name": "inventorybox",
     "Position": "0,0,0",
     "Rotation": "0,0,0,1",
     "Scale": "1,1,1",
@@ -79,15 +79,23 @@
         "__guid": "d2a5e8bc-da2b-4d2b-86af-2f990af02214",
         "__enabled": true,
         "Flags": 0,
-        "ClosedModel": null,
-        "ItemTypes": [],
+        "ClosedModel": {
+          "_type": "gameobject",
+          "go": "c47b0636-00ce-4f1a-b613-bab75bc2e07c"
+        },
+        "ItemTypes": [
+          "data/items/medpack.itemcat"
+        ],
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "OpenModel": null,
+        "OpenModel": {
+          "_type": "gameobject",
+          "go": "8c2243eb-352d-481e-bf6c-0dcd47303226"
+        },
         "TotalItems": 10
       },
       {
@@ -95,8 +103,9 @@
         "__guid": "f619479b-59b5-402b-bf7e-62f30f9c40a9",
         "__enabled": true,
         "Flags": 0,
-        "HoldOffset": "20,-15,50",
+        "HoldOffset": "24.67001,-10.38999,-12.38002",
         "HoldRotation": "0,0,0",
+        "HoldScale": 0.6,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -198,7 +207,27 @@
         ],
         "Children": []
       }
-    ]
+    ],
+    "__properties": {
+      "NetworkInterpolation": true,
+      "TimeScale": 1,
+      "WantsSystemScene": true,
+      "Metadata": {},
+      "NavMesh": {
+        "Enabled": false,
+        "IncludeStaticBodies": true,
+        "IncludeKeyframedBodies": true,
+        "EditorAutoUpdate": false,
+        "AgentHeight": 64,
+        "AgentRadius": 16,
+        "AgentStepSize": 18,
+        "AgentMaxSlope": 40,
+        "ExcludedBodies": "",
+        "IncludedBodies": "",
+        "CustomBounds": false
+      }
+    },
+    "__variables": []
   },
   "ResourceVersion": 2,
   "ShowInMenu": false,

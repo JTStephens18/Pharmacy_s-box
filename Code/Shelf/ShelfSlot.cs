@@ -51,7 +51,7 @@ public sealed class ShelfSlot : Component, IPlaceable
 	{
 		if ( IsOccupied ) return "Slot Full";
 		return AcceptedCategory != null
-			? $"Place [{AcceptedCategory.ResourceName}] ({CurrentItemCount}/{ItemPlacements.Count})"
+			? $"Place [{AcceptedCategory.Description}] ({CurrentItemCount}/{ItemPlacements.Count})"
 			: $"Place ({CurrentItemCount}/{ItemPlacements.Count})";
 	}
 
@@ -134,5 +134,45 @@ public sealed class ShelfSlot : Component, IPlaceable
 		foreach ( var p in ItemPlacements )
 			p.PlacedItem = null;
 		CurrentItemCount = 0;
+	}
+
+	[Group( "Debug" )]
+	[Property] public bool ShowDebugGizmos { get; set; } = false;
+
+	protected override void OnUpdate()
+	{
+		if ( ShowDebugGizmos )
+			DrawSlotGizmos();
+	}
+
+	private void DrawSlotGizmos()
+	{
+		using ( Gizmo.Scope( "ShelfSlotDebug", WorldTransform ) )
+		{
+			// Slot outline
+			Gizmo.Draw.Color = IsOccupied ? Color.Yellow : Color.Green;
+			Gizmo.Draw.LineBBox( BBox.FromPositionAndSize( Vector3.Zero, new Vector3( 6, 6, 6 ) ) );
+
+			// Per-placement markers
+			for ( int i = 0; i < ItemPlacements.Count; i++ )
+			{
+				var p = ItemPlacements[i];
+				bool filled = i < CurrentItemCount;
+				Gizmo.Draw.Color = filled ? Color.Red.WithAlpha( 0.6f ) : Color.Cyan.WithAlpha( 0.6f );
+				Gizmo.Draw.LineSphere( new Sphere( p.PositionOffset, 2f ) );
+			}
+		}
+	}
+
+	protected override void DrawGizmos()
+	{
+		DrawSlotGizmos();
+
+		// Category label — editor only
+		if ( AcceptedCategory != null )
+		{
+			Gizmo.Draw.Color = Color.White;
+			Gizmo.Draw.ScreenText( AcceptedCategory.Description, 14, flags: TextFlag.Center );
+		}
 	}
 }

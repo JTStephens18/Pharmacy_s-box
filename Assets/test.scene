@@ -842,7 +842,10 @@
               "AllowedShelfSlots": [],
               "CounterSlots": [],
               "DelayAfterExit": 3,
-              "ExitPoint": null,
+              "ExitPoint": {
+                "_type": "gameobject",
+                "go": "0d928654-be45-40d8-aa4c-4c363fd8ddd1"
+              },
               "IdCardSlot": null,
               "InitialDelay": 2,
               "OnComponentDestroy": null,
@@ -863,7 +866,25 @@
               "__version": 2,
               "Flags": 0,
               "Name": "NPCSpawnPoint",
-              "Position": "0,-226.2869,-40.27621",
+              "Position": "129.8763,-242.4979,-40.27621",
+              "Rotation": "0,0,0,1",
+              "Scale": "1,1,1",
+              "Tags": "",
+              "Enabled": true,
+              "NetworkMode": 2,
+              "NetworkFlags": 0,
+              "NetworkOrphaned": 0,
+              "NetworkTransmit": true,
+              "OwnerTransfer": 1,
+              "Components": [],
+              "Children": []
+            },
+            {
+              "__guid": "0d928654-be45-40d8-aa4c-4c363fd8ddd1",
+              "__version": 2,
+              "Flags": 0,
+              "Name": "NPCExitPoint",
+              "Position": "0,169.4671,-72.07979",
               "Rotation": "0,0,0,1",
               "Scale": "1,1,1",
               "Tags": "",
@@ -924,6 +945,12 @@
                   "prefab": "prefabs/johndoe.prefab"
                 }
               ],
+              "TestSpawnManager": {
+                "_type": "component",
+                "component_id": "c1020c53-b362-4d20-bdb4-7e7ec0807363",
+                "go": "c37aa077-1a18-4f6e-8151-572290e57bc5",
+                "component_type": "NPCSpawnManager"
+              },
               "TestSpawnOnStart": true,
               "TestSpawnPoint": {
                 "_type": "gameobject",
@@ -1368,14 +1395,6 @@
             },
             "Property": "Position",
             "Value": "92.7112,36.49865,70.78326"
-          },
-          {
-            "Target": {
-              "Type": "Component",
-              "IdValue": "f619479b-59b5-402b-bf7e-62f30f9c40a9"
-            },
-            "Property": "HoldOffset",
-            "Value": "24.67001,-10.38999,-12.38002"
           }
         ],
         "MovedObjects": []
@@ -1422,106 +1441,43 @@
       }
     },
     {
-      "__guid": "384ec181-eaac-4266-80e7-286483ed38eb",
+      "__guid": "2b33374e-fe58-48c6-ae35-8eb2b98d59ae",
       "__version": 2,
       "Flags": 0,
-      "Name": "ShelfSection",
-      "Position": "-8.117628,98.03751,39.00772",
+      "Name": "Counter",
+      "Position": "-163.1963,-139.1715,58.89865",
       "Rotation": "0,0,0,1",
       "Scale": "1,1,1",
       "Tags": "",
       "Enabled": true,
-      "NetworkMode": 1,
+      "NetworkMode": 2,
       "NetworkFlags": 0,
       "NetworkOrphaned": 0,
       "NetworkTransmit": true,
       "OwnerTransfer": 1,
-      "Components": [
-        {
-          "__type": "ShelfSection",
-          "__guid": "b9889617-718c-4672-a6d4-4e4e82ceaf5a",
-          "__enabled": true,
-          "Flags": 0,
-          "AcceptedCategory": null,
-          "AutoFindSlots": true,
-          "OnComponentDestroy": null,
-          "OnComponentDisabled": null,
-          "OnComponentEnabled": null,
-          "OnComponentFixedUpdate": null,
-          "OnComponentStart": null,
-          "OnComponentUpdate": null,
-          "PlacementPrompt": "Press E to Place",
-          "Slots": []
-        }
-      ],
+      "Components": [],
       "Children": [
         {
-          "__guid": "e5c61526-c0e1-4692-96c2-0c1402a7eb4b",
+          "__guid": "da287abf-234e-403f-bcc3-a476368442ba",
           "__version": 2,
           "Flags": 0,
-          "Name": "SlotA",
-          "Position": "0,0,0",
+          "Name": "CounterSlotA",
+          "Position": "49.70407,0,0",
           "Rotation": "0,0,0,1",
           "Scale": "1,1,1",
           "Tags": "",
           "Enabled": true,
-          "NetworkMode": 1,
+          "NetworkMode": 2,
           "NetworkFlags": 0,
           "NetworkOrphaned": 0,
           "NetworkTransmit": true,
           "OwnerTransfer": 1,
           "Components": [
             {
-              "__type": "ShelfSlot",
-              "__guid": "14385117-29c5-4b1d-a878-b6d4567a8cf3",
+              "__type": "CounterSlot",
+              "__guid": "fde8cbfa-4bc4-4511-9947-e7b5597d3d60",
               "__enabled": true,
               "Flags": 0,
-              "AcceptedCategory": "data/items/medpack.itemcat",
-              "ItemPlacements": [
-                {
-                  "PositionOffset": "0,0,0",
-                  "RotationOffset": "0,0,0",
-                  "PlacedItem": null
-                },
-                {
-                  "PositionOffset": "2.5,0,0",
-                  "RotationOffset": "0,0,0",
-                  "PlacedItem": null
-                }
-              ],
-              "OnComponentDestroy": null,
-              "OnComponentDisabled": null,
-              "OnComponentEnabled": null,
-              "OnComponentFixedUpdate": null,
-              "OnComponentStart": null,
-              "OnComponentUpdate": null,
-              "RequireHeldItem": true
-            }
-          ],
-          "Children": []
-        },
-        {
-          "__guid": "329c86f2-6164-460f-a4a3-3c35f4e789e1",
-          "__version": 2,
-          "Flags": 0,
-          "Name": "SlotB",
-          "Position": "0,0,0",
-          "Rotation": "0,0,0,1",
-          "Scale": "1,1,1",
-          "Tags": "",
-          "Enabled": true,
-          "NetworkMode": 1,
-          "NetworkFlags": 0,
-          "NetworkOrphaned": 0,
-          "NetworkTransmit": true,
-          "OwnerTransfer": 1,
-          "Components": [
-            {
-              "__type": "ShelfSlot",
-              "__guid": "2d0acaae-4115-46a8-bf97-f319516a8ffa",
-              "__enabled": true,
-              "Flags": 0,
-              "AcceptedCategory": null,
               "ItemPlacements": [
                 {
                   "PositionOffset": "0,0,0",
@@ -1534,92 +1490,174 @@
               "OnComponentEnabled": null,
               "OnComponentFixedUpdate": null,
               "OnComponentStart": null,
-              "OnComponentUpdate": null,
-              "RequireHeldItem": true
-            }
-          ],
-          "Children": []
-        },
-        {
-          "__guid": "4f9d589a-c7c0-472e-b889-ad7a7222f9c0",
-          "__version": 2,
-          "Flags": 0,
-          "Name": "SlotC",
-          "Position": "0,0,0",
-          "Rotation": "0,0,0,1",
-          "Scale": "1,1,1",
-          "Tags": "",
-          "Enabled": true,
-          "NetworkMode": 1,
-          "NetworkFlags": 0,
-          "NetworkOrphaned": 0,
-          "NetworkTransmit": true,
-          "OwnerTransfer": 1,
-          "Components": [
-            {
-              "__type": "ShelfSlot",
-              "__guid": "bc4982c5-f2cd-4255-9d38-38fdca639aa0",
-              "__enabled": true,
-              "Flags": 0,
-              "AcceptedCategory": null,
-              "ItemPlacements": [
-                {
-                  "PositionOffset": "0,0,0",
-                  "RotationOffset": "0,0,0",
-                  "PlacedItem": null
-                }
-              ],
-              "OnComponentDestroy": null,
-              "OnComponentDisabled": null,
-              "OnComponentEnabled": null,
-              "OnComponentFixedUpdate": null,
-              "OnComponentStart": null,
-              "OnComponentUpdate": null,
-              "RequireHeldItem": true
-            }
-          ],
-          "Children": []
-        },
-        {
-          "__guid": "9b78438a-b73f-4ec5-b033-9453e8b91613",
-          "__version": 2,
-          "Flags": 0,
-          "Name": "ShelfUnit",
-          "Position": "0,0,0",
-          "Rotation": "0,0,0,1",
-          "Scale": "1,1,1",
-          "Tags": "",
-          "Enabled": true,
-          "NetworkMode": 1,
-          "NetworkFlags": 0,
-          "NetworkOrphaned": 0,
-          "NetworkTransmit": true,
-          "OwnerTransfer": 1,
-          "Components": [
-            {
-              "__type": "Sandbox.Prop",
-              "__guid": "675b738f-8266-4d42-b8ea-ba353e3464b3",
-              "__enabled": true,
-              "Flags": 0,
-              "BodyGroups": 18446744073709551615,
-              "Health": 0,
-              "IsStatic": false,
-              "MaterialGroup": null,
-              "Model": "models/props/shop_shelves/shop_shelves.vmdl",
-              "OnComponentDestroy": null,
-              "OnComponentDisabled": null,
-              "OnComponentEnabled": null,
-              "OnComponentFixedUpdate": null,
-              "OnComponentStart": null,
-              "OnComponentUpdate": null,
-              "OnPropBreak": null,
-              "OnPropTakeDamage": null,
-              "StartAsleep": false,
-              "Tint": "1,1,1,1"
+              "OnComponentUpdate": null
             },
             {
+              "__type": "Sandbox.BoxCollider",
+              "__guid": "a0845f1d-a001-49dd-8d7f-e81235492823",
+              "__enabled": true,
+              "Flags": 0,
+              "Center": "2.469288,0,10.31086",
+              "ColliderFlags": 0,
+              "Elasticity": null,
+              "Friction": null,
+              "IsTrigger": false,
+              "OnComponentDestroy": null,
+              "OnComponentDisabled": null,
+              "OnComponentEnabled": null,
+              "OnComponentFixedUpdate": null,
+              "OnComponentStart": null,
+              "OnComponentUpdate": null,
+              "OnObjectTriggerEnter": null,
+              "OnObjectTriggerExit": null,
+              "OnTriggerEnter": null,
+              "OnTriggerExit": null,
+              "RollingResistance": null,
+              "Scale": "21.46758,50,29.37827",
+              "Static": false,
+              "Surface": null,
+              "SurfaceVelocity": "0,0,0"
+            }
+          ],
+          "Children": []
+        },
+        {
+          "__guid": "edd60237-99e8-4622-95f1-1ec72bd3c3dc",
+          "__version": 2,
+          "Flags": 0,
+          "Name": "CounterSlotB",
+          "Position": "65.05534,0,0",
+          "Rotation": "0,0,0,1",
+          "Scale": "1,1,1",
+          "Tags": "",
+          "Enabled": true,
+          "NetworkMode": 2,
+          "NetworkFlags": 0,
+          "NetworkOrphaned": 0,
+          "NetworkTransmit": true,
+          "OwnerTransfer": 1,
+          "Components": [
+            {
+              "__type": "CounterSlot",
+              "__guid": "404aa9f5-03c1-458a-b3db-43fd0412af42",
+              "__enabled": true,
+              "Flags": 0,
+              "ItemPlacements": [
+                {
+                  "PositionOffset": "0,0,0",
+                  "RotationOffset": "0,0,0",
+                  "PlacedItem": null
+                }
+              ],
+              "OnComponentDestroy": null,
+              "OnComponentDisabled": null,
+              "OnComponentEnabled": null,
+              "OnComponentFixedUpdate": null,
+              "OnComponentStart": null,
+              "OnComponentUpdate": null
+            },
+            {
+              "__type": "Sandbox.BoxCollider",
+              "__guid": "a652c1c7-2046-444e-8c1c-bad837d99abc",
+              "__enabled": true,
+              "Flags": 0,
+              "Center": "6.013785,0,11.06481",
+              "ColliderFlags": 0,
+              "Elasticity": null,
+              "Friction": null,
+              "IsTrigger": false,
+              "OnComponentDestroy": null,
+              "OnComponentDisabled": null,
+              "OnComponentEnabled": null,
+              "OnComponentFixedUpdate": null,
+              "OnComponentStart": null,
+              "OnComponentUpdate": null,
+              "OnObjectTriggerEnter": null,
+              "OnObjectTriggerExit": null,
+              "OnTriggerEnter": null,
+              "OnTriggerExit": null,
+              "RollingResistance": null,
+              "Scale": "20.99434,50,27.87038",
+              "Static": false,
+              "Surface": null,
+              "SurfaceVelocity": "0,0,0"
+            }
+          ],
+          "Children": []
+        },
+        {
+          "__guid": "29d3cbf0-37da-4e64-bceb-692aba4b1fb7",
+          "__version": 2,
+          "Flags": 0,
+          "Name": "IDCardSlot",
+          "Position": "-33.49457,0,0",
+          "Rotation": "0,0,0,1",
+          "Scale": "1,1,1",
+          "Tags": "",
+          "Enabled": true,
+          "NetworkMode": 2,
+          "NetworkFlags": 0,
+          "NetworkOrphaned": 0,
+          "NetworkTransmit": true,
+          "OwnerTransfer": 1,
+          "Components": [
+            {
+              "__type": "IDCardSlot",
+              "__guid": "135f44de-0741-405e-904a-bfc9c050138e",
+              "__enabled": true,
+              "Flags": 0,
+              "FocusCameraTarget": {
+                "_type": "gameobject",
+                "go": "2f541be7-879d-4fa0-ba8d-b91789c22ed2"
+              },
+              "OnComponentDestroy": null,
+              "OnComponentDisabled": null,
+              "OnComponentEnabled": null,
+              "OnComponentFixedUpdate": null,
+              "OnComponentStart": null,
+              "OnComponentUpdate": null
+            }
+          ],
+          "Children": [
+            {
+              "__guid": "2f541be7-879d-4fa0-ba8d-b91789c22ed2",
+              "__version": 2,
+              "Flags": 0,
+              "Name": "FocusCameraTarget",
+              "Position": "0,55.79253,19.98916",
+              "Rotation": "0,0,0,1",
+              "Scale": "1,1,1",
+              "Tags": "",
+              "Enabled": true,
+              "NetworkMode": 2,
+              "NetworkFlags": 0,
+              "NetworkOrphaned": 0,
+              "NetworkTransmit": true,
+              "OwnerTransfer": 1,
+              "Components": [],
+              "Children": []
+            }
+          ]
+        },
+        {
+          "__guid": "9c71e246-4442-486b-adee-3dfce1e62ac4",
+          "__version": 2,
+          "Flags": 0,
+          "Name": "CashRegister",
+          "Position": "0,-8.338791,0",
+          "Rotation": "0,0,0,1",
+          "Scale": "0.5284361,0.4914948,0.3489212",
+          "Tags": "",
+          "Enabled": true,
+          "NetworkMode": 2,
+          "NetworkFlags": 0,
+          "NetworkOrphaned": 0,
+          "NetworkTransmit": true,
+          "OwnerTransfer": 1,
+          "Components": [
+            {
               "__type": "Sandbox.ModelRenderer",
-              "__guid": "e90a25ec-6701-4107-bfe3-5b6fc95c962b",
+              "__guid": "326326a3-23f2-4f7d-8f7f-9834a22ad929",
               "__enabled": true,
               "Flags": 0,
               "BodyGroups": 18446744073709551615,
@@ -1628,7 +1666,7 @@
               "MaterialGroup": null,
               "MaterialOverride": null,
               "Materials": null,
-              "Model": "models/props/shop_shelves/shop_shelves.vmdl",
+              "Model": "models/dev/box.vmdl",
               "OnComponentDestroy": null,
               "OnComponentDisabled": null,
               "OnComponentEnabled": null,
@@ -1645,68 +1683,146 @@
               "Tint": "1,1,1,1"
             },
             {
-              "__type": "Sandbox.ModelCollider",
-              "__guid": "97d5db95-db76-47ec-9daf-cf23dbde3a5f",
+              "__type": "CashRegister",
+              "__guid": "cc9f7afd-9a28-4fcf-9887-cd57dac5ef3a",
               "__enabled": true,
               "Flags": 0,
-              "ColliderFlags": 0,
-              "Elasticity": null,
-              "Friction": null,
-              "IsTrigger": false,
-              "Model": "models/props/shop_shelves/shop_shelves.vmdl",
+              "InteractionRange": 150,
+              "NpcDetectionRadius": 300,
               "OnComponentDestroy": null,
               "OnComponentDisabled": null,
               "OnComponentEnabled": null,
               "OnComponentFixedUpdate": null,
               "OnComponentStart": null,
               "OnComponentUpdate": null,
-              "OnObjectTriggerEnter": null,
-              "OnObjectTriggerExit": null,
-              "OnTriggerEnter": null,
-              "OnTriggerExit": null,
-              "RollingResistance": null,
-              "Static": false,
-              "Surface": null,
-              "SurfaceVelocity": "0,0,0"
-            },
-            {
-              "__type": "Sandbox.Rigidbody",
-              "__guid": "cbebdd78-5c92-4d01-9511-8f1667590195",
-              "__enabled": true,
-              "Flags": 0,
-              "AngularDamping": 0,
-              "EnableImpactDamage": true,
-              "EnhancedCcd": false,
-              "Gravity": true,
-              "GravityScale": 1,
-              "ImpactDamage": 0,
-              "LinearDamping": 0,
-              "Locking": {
-                "X": false,
-                "Y": false,
-                "Z": false,
-                "Pitch": false,
-                "Yaw": false,
-                "Roll": false
-              },
-              "MassCenterOverride": "0,0,0",
-              "MassOverride": 0,
-              "MinImpactDamageSpeed": 500,
-              "MotionEnabled": true,
-              "OnComponentDestroy": null,
-              "OnComponentDisabled": null,
-              "OnComponentEnabled": null,
-              "OnComponentFixedUpdate": null,
-              "OnComponentStart": null,
-              "OnComponentUpdate": null,
-              "OverrideMassCenter": false,
-              "RigidbodyFlags": 0,
-              "StartAsleep": false
+              "ScoreManagerRef": null,
+              "ShiftManagerRef": null
             }
           ],
           "Children": []
         }
       ]
+    },
+    {
+      "__guid": "7da4c2be-0824-4e57-8414-4cd703302bc4",
+      "__version": 2,
+      "__Prefab": "prefabs/shelf.prefab",
+      "__PrefabInstancePatch": {
+        "AddedObjects": [],
+        "RemovedObjects": [],
+        "PropertyOverrides": [
+          {
+            "Target": {
+              "Type": "GameObject",
+              "IdValue": "1fee2cca-e5a8-4446-9de3-927c85b64e1a"
+            },
+            "Property": "Position",
+            "Value": "-110.9202,35.26261,19.13395"
+          },
+          {
+            "Target": {
+              "Type": "Component",
+              "IdValue": "dac58299-388f-4e39-a0bd-2ebe22ed03b1"
+            },
+            "Property": "AcceptedCategory",
+            "Value": "data/items/medpack.itemcat"
+          },
+          {
+            "Target": {
+              "Type": "Component",
+              "IdValue": "dac58299-388f-4e39-a0bd-2ebe22ed03b1"
+            },
+            "Property": "Slots",
+            "Value": [
+              {
+                "_type": "component",
+                "component_id": "5ae9ee0a-3a31-4637-8b45-5d134aee5b64",
+                "go": "248779c8-e356-43b1-903c-4d42888a890f",
+                "component_type": "ShelfSlot"
+              },
+              {
+                "_type": "component",
+                "component_id": "05a87891-6096-4316-94dc-b995485aeafe",
+                "go": "a64286ba-9be1-476a-90ef-832160935097",
+                "component_type": "ShelfSlot"
+              }
+            ]
+          },
+          {
+            "Target": {
+              "Type": "GameObject",
+              "IdValue": "248779c8-e356-43b1-903c-4d42888a890f"
+            },
+            "Property": "Position",
+            "Value": "7.104523,0,57.72012"
+          }
+        ],
+        "MovedObjects": []
+      },
+      "__PrefabIdToInstanceId": {
+        "1fee2cca-e5a8-4446-9de3-927c85b64e1a": "7da4c2be-0824-4e57-8414-4cd703302bc4",
+        "dac58299-388f-4e39-a0bd-2ebe22ed03b1": "036a2c48-1be5-43d7-bbc7-2c8e488d92f8",
+        "248779c8-e356-43b1-903c-4d42888a890f": "98bb2af4-d23c-4b91-854d-878b48b08bb3",
+        "5ae9ee0a-3a31-4637-8b45-5d134aee5b64": "427b467b-97ec-44a9-8310-602529304010",
+        "a64286ba-9be1-476a-90ef-832160935097": "c2d1f54f-7162-458c-b926-a770f9cdfc20",
+        "05a87891-6096-4316-94dc-b995485aeafe": "c3fdd07c-fa57-481b-8e4a-9b042a24726d",
+        "580fb9b3-4d4d-411a-ba1d-05b176a86460": "4c53b690-6b04-4a31-b077-bf11060246a1",
+        "437ee0cc-1df1-4a70-80f1-2992f48ea158": "941e838f-8339-4a34-bce7-6f1ee3ba4b6b",
+        "0a5d8be4-8d08-4600-a9da-4d77947421e4": "ccee4f83-07df-4493-9f53-22b27e6781c8",
+        "faacdb8e-b662-4473-8df4-4d91b03c417e": "55511bf6-cd04-46be-8541-cf4e8e06ebae",
+        "4b9dd5e0-6839-47c9-8bb9-f65d3d4c84ec": "930cb6eb-53b3-4c1e-bdd4-9c176954d37a",
+        "6f43c8cb-8a6d-45d4-837c-c0b347a1708a": "fbcb9641-e67d-4481-bdd7-f2c8ba08e3fc",
+        "2b88c799-6ffd-4413-a77b-8954563da670": "47d94930-7712-4fd9-a5f2-22e3880a1b68"
+      }
+    },
+    {
+      "__guid": "bd6f0a03-c11c-467a-bc51-aae850c4c2b2",
+      "__version": 2,
+      "Flags": 0,
+      "Name": "UI",
+      "Position": "-177.4628,154.3238,80.60718",
+      "Rotation": "0,0,0,1",
+      "Scale": "1,1,1",
+      "Tags": "",
+      "Enabled": true,
+      "NetworkMode": 2,
+      "NetworkFlags": 0,
+      "NetworkOrphaned": 0,
+      "NetworkTransmit": true,
+      "OwnerTransfer": 1,
+      "Components": [
+        {
+          "__type": "Sandbox.ScreenPanel",
+          "__guid": "9eaced36-917b-42e5-a50a-536434a9e2c0",
+          "__enabled": true,
+          "Flags": 0,
+          "AutoScreenScale": true,
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "Opacity": 1,
+          "Scale": 1,
+          "ScaleStrategy": "ConsistentHeight",
+          "TargetCamera": null,
+          "ZIndex": 100
+        },
+        {
+          "__type": "Sandbox.UI.Crosshair",
+          "__guid": "e451a330-921d-4376-929d-a5eb037d77c3",
+          "__enabled": true,
+          "Flags": 0,
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null
+        }
+      ],
+      "Children": []
     }
   ],
   "SceneProperties": {
@@ -1730,11 +1846,6 @@
     "GameObjectSystems": {
       "Sandbox.MovieMaker.MovieRecorderSystem": {
         "DisableClientRecording": false
-      },
-      "Sandbox.Clutter.ClutterGridSystem": {
-        "Storage": {
-          "$blob": "6c1603db-dcc8-4287-95a0-b09fbcc2f4e3"
-        }
       }
     }
   },
@@ -1744,7 +1855,6 @@
   "__references": [
     "facepunch.corrugated_wall_a_128#169125",
     "facepunch.watermelon#143952",
-    "fish.shop_shelves#105384",
     "subzerostudios.modularfloor#161965",
     "subzerostudios.modularwall#161964"
   ],

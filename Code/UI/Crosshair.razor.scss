@@ -1,0 +1,21 @@
+.crosshair {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+
+    .crosshair-dot {
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.85);
+        left: -4px;
+        top: -4px;
+
+        /* thin dark outline so it's visible on white backgrounds */
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6);
+    }
+}

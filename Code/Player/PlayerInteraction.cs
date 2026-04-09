@@ -81,6 +81,9 @@ public sealed class PlayerInteraction : Component
 
 		// Lerp released objects back to their original scale
 		UpdateRestoreScales();
+
+		// In-game debug drawing
+		DrawDebugGizmos();
 	}
 
 	// ── Detection ────────────────────────────────────────────────────
@@ -332,5 +335,65 @@ public sealed class PlayerInteraction : Component
 		var item = _heldObject;
 		ReleaseObject();
 		_currentPlaceable.TryPlaceItem( item );
+	}
+
+	// ── Debug ─────────────────────────────────────────────────────────
+
+	[Group( "Debug" )]
+	[Property] public bool ShowDebugGizmos { get; set; } = false;
+
+	private void DrawDebugGizmos()
+	{
+		if ( !ShowDebugGizmos ) return;
+
+		using ( Gizmo.Scope( "PlayerInteractionDebug", global::Transform.Zero ) )
+		{
+			// Pickup ray
+			Gizmo.Draw.Color = Color.White.WithAlpha( 0.4f );
+			Gizmo.Draw.Line(
+				Scene.Camera.WorldPosition,
+				Scene.Camera.WorldPosition + Scene.Camera.WorldRotation.Forward * PickupRange
+			);
+
+			// Highlight all slots in the looked-at shelf section
+			if ( _currentPlaceable is ShelfSection section )
+			{
+				foreach ( var slot in section.GetSlots() )
+				{
+					if ( slot == null ) continue;
+					using ( Gizmo.Scope( "slot", slot.WorldTransform ) )
+					{
+						Gizmo.Draw.Color = slot.IsOccupied ? Color.Yellow : Color.Green;
+						Gizmo.Draw.LineBBox( BBox.FromPositionAndSize( Vector3.Zero, new Vector3( 8, 8, 8 ) ) );
+					}
+				}
+			}
+
+			// Highlight detected delivery station
+			if ( _currentDelivery != null )
+			{
+				using ( Gizmo.Scope( "delivery", _currentDelivery.WorldTransform ) )
+				{
+					Gizmo.Draw.Color = Color.Orange;
+					Gizmo.Draw.LineBBox( BBox.FromPositionAndSize( Vector3.Zero, new Vector3( 12, 12, 12 ) ) );
+				}
+			}
+
+			// Highlight detected cash register
+			if ( _currentCashRegister != null )
+			{
+				using ( Gizmo.Scope( "register", _currentCashRegister.WorldTransform ) )
+				{
+					Gizmo.Draw.Color = Color.Cyan;
+					Gizmo.Draw.LineBBox( BBox.FromPositionAndSize( Vector3.Zero, new Vector3( 12, 12, 12 ) ) );
+				}
+			}
+		}
+	}
+
+	// Editor-only gizmos (always on in editor)
+	protected override void DrawGizmos()
+	{
+		DrawDebugGizmos();
 	}
 }

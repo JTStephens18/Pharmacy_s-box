@@ -20,6 +20,11 @@ public sealed class PlayerInteraction : Component
 	[Group( "Throw" )]
 	[Property] public float ThrowForce { get; set; } = 800f;
 
+	[Group( "Shelf Placement" )]
+	[Property] public float BoxPlacementRange { get; set; } = 120f;
+	[Group( "Shelf Placement" )]
+	[Property] public float SlotAimAngle { get; set; } = 20f;
+
 	[Group( "Hold Scale" )]
 	[Property] public float ScaleAnimSpeed { get; set; } = 8f;
 
@@ -344,35 +349,41 @@ public sealed class PlayerInteraction : Component
 		if ( box == null ) return;
 
 		var nextCat = box.PeekNextCategory();
-		Log.Info( $"[PlaceFromBox] nextCat={nextCat?.Description ?? "NULL"}, prefab={nextCat?.Prefab?.ResourceName ?? "NULL"}" );
-		Log.Info( $"[PlaceFromBox] _currentPlaceable={_currentPlaceable?.GetType().Name ?? "NULL"}" );
-
 		if ( nextCat == null || nextCat.Prefab == null ) return;
 
-		// Resolve the target slot
+		// Range check against the hit point
+		var tr = CastRay();
+		if ( !tr.Hit || tr.Distance > BoxPlacementRange ) return;
+
+		// Find the slot the player is most directly aiming at
 		ShelfSlot targetSlot = null;
+		var slots = new System.Collections.Generic.List<ShelfSlot>();
 
 		if ( _currentPlaceable is ShelfSlot directSlot )
-		{
-			Log.Info( $"[PlaceFromBox] Direct slot: occupied={directSlot.IsOccupied} ({directSlot.CurrentItemCount}/{directSlot.MaxItems}), acceptedCat={directSlot.AcceptedCategory?.Description ?? "ANY"}" );
-			if ( !directSlot.IsOccupied && ( directSlot.AcceptedCategory == null || directSlot.AcceptedCategory == nextCat ) )
-				targetSlot = directSlot;
-		}
+			slots.Add( directSlot );
 		else if ( _currentPlaceable is ShelfSection section )
+			slots.AddRange( section.GetSlots() );
+
+		var camPos = Scene.Camera.WorldPosition;
+		var camFwd = Scene.Camera.WorldRotation.Forward;
+		float bestDot = float.MinValue;
+
+		foreach ( var s in slots )
 		{
-			Log.Info( $"[PlaceFromBox] Section with {section.GetSlots().Count} slots, available={section.AvailableSlots}" );
-			foreach ( var s in section.GetSlots() )
+			if ( s.IsOccupied ) continue;
+			if ( s.AcceptedCategory != null && s.AcceptedCategory != nextCat ) continue;
+
+			var toSlot = (s.WorldPosition - camPos).Normal;
+			float dot = Vector3.Dot( camFwd, toSlot );
+			float angleDeg = MathF.Acos( Math.Clamp( dot, -1f, 1f ) ) * (180f / MathF.PI);
+
+			if ( angleDeg <= SlotAimAngle && dot > bestDot )
 			{
-				Log.Info( $"  slot: occupied={s.IsOccupied} ({s.CurrentItemCount}/{s.MaxItems}), acceptedCat={s.AcceptedCategory?.Description ?? "ANY"}" );
-				if ( !s.IsOccupied && ( s.AcceptedCategory == null || s.AcceptedCategory == nextCat ) )
-				{
-					targetSlot = s;
-					break;
-				}
+				bestDot = dot;
+				targetSlot = s;
 			}
 		}
 
-		Log.Info( $"[PlaceFromBox] targetSlot={targetSlot?.GameObject.Name ?? "NULL"}" );
 		if ( targetSlot == null ) return;
 
 		PlaceFromBoxOnHost( nextCat, targetSlot.GameObject, _heldObject );

@@ -34,8 +34,9 @@ public sealed class InventoryBox : Component
 	private void BuildQueue()
 	{
 		_queue.Clear();
-		foreach ( var cat in ItemTypes )
-			_queue.Enqueue( cat );
+		if ( ItemTypes.Count == 0 ) return;
+		for ( int i = 0; i < TotalItems; i++ )
+			_queue.Enqueue( ItemTypes[i % ItemTypes.Count] );
 	}
 
 	/// <summary>Returns the next item category in the queue, without removing it.</summary>

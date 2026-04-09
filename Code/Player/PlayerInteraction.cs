@@ -137,8 +137,9 @@ public sealed class PlayerInteraction : Component
 	{
 		if ( IsHolding )
 		{
-			// Holding item: try to place it
-			if ( _currentPlaceable != null && !_holdingBox && _currentPlaceable.CanPlaceItem( _heldObject ) )
+			if ( _holdingBox && _currentPlaceable != null )
+				PlaceFromBox();
+			else if ( !_holdingBox && _currentPlaceable != null && _currentPlaceable.CanPlaceItem( _heldObject ) )
 				PlaceOnTarget();
 			else
 				DropObject();
@@ -335,6 +336,61 @@ public sealed class PlayerInteraction : Component
 		var item = _heldObject;
 		ReleaseObject();
 		_currentPlaceable.TryPlaceItem( item );
+	}
+
+	private void PlaceFromBox()
+	{
+		var box = _heldObject?.GetComponent<InventoryBox>();
+		if ( box == null ) return;
+
+		var nextCat = box.PeekNextCategory();
+		Log.Info( $"[PlaceFromBox] nextCat={nextCat?.Description ?? "NULL"}, prefab={nextCat?.Prefab?.ResourceName ?? "NULL"}" );
+		Log.Info( $"[PlaceFromBox] _currentPlaceable={_currentPlaceable?.GetType().Name ?? "NULL"}" );
+
+		if ( nextCat == null || nextCat.Prefab == null ) return;
+
+		// Resolve the target slot
+		ShelfSlot targetSlot = null;
+
+		if ( _currentPlaceable is ShelfSlot directSlot )
+		{
+			Log.Info( $"[PlaceFromBox] Direct slot: occupied={directSlot.IsOccupied} ({directSlot.CurrentItemCount}/{directSlot.MaxItems}), acceptedCat={directSlot.AcceptedCategory?.Description ?? "ANY"}" );
+			if ( !directSlot.IsOccupied && ( directSlot.AcceptedCategory == null || directSlot.AcceptedCategory == nextCat ) )
+				targetSlot = directSlot;
+		}
+		else if ( _currentPlaceable is ShelfSection section )
+		{
+			Log.Info( $"[PlaceFromBox] Section with {section.GetSlots().Count} slots, available={section.AvailableSlots}" );
+			foreach ( var s in section.GetSlots() )
+			{
+				Log.Info( $"  slot: occupied={s.IsOccupied} ({s.CurrentItemCount}/{s.MaxItems}), acceptedCat={s.AcceptedCategory?.Description ?? "ANY"}" );
+				if ( !s.IsOccupied && ( s.AcceptedCategory == null || s.AcceptedCategory == nextCat ) )
+				{
+					targetSlot = s;
+					break;
+				}
+			}
+		}
+
+		Log.Info( $"[PlaceFromBox] targetSlot={targetSlot?.GameObject.Name ?? "NULL"}" );
+		if ( targetSlot == null ) return;
+
+		PlaceFromBoxOnHost( nextCat, targetSlot.GameObject, _heldObject );
+	}
+
+	[Rpc.Host]
+	private void PlaceFromBoxOnHost( ItemCategory category, GameObject slotGo, GameObject boxGo )
+	{
+		if ( category?.Prefab == null || !slotGo.IsValid() || !boxGo.IsValid() ) return;
+
+		var slot = slotGo.GetComponent<ShelfSlot>();
+		var box = boxGo.GetComponent<InventoryBox>();
+		if ( slot == null || box == null || slot.IsOccupied ) return;
+
+		var spawned = SceneUtility.GetPrefabScene( category.Prefab ).Clone( slotGo.WorldTransform );
+		spawned.NetworkSpawn();
+		slot.PlaceItem( spawned );
+		box.Decrement();
 	}
 
 	// ── Debug ─────────────────────────────────────────────────────────

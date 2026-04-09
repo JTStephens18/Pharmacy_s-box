@@ -1708,8 +1708,112 @@
       "__version": 2,
       "__Prefab": "prefabs/shelf.prefab",
       "__PrefabInstancePatch": {
-        "AddedObjects": [],
-        "RemovedObjects": [],
+        "AddedObjects": [
+          {
+            "Id": {
+              "Type": "Component",
+              "IdValue": "d58692ac-7269-4f62-9fee-b247c30ce67b"
+            },
+            "Parent": {
+              "Type": "GameObject",
+              "IdValue": "0a5d8be4-8d08-4600-a9da-4d77947421e4"
+            },
+            "PreviousElement": {
+              "Type": "Component",
+              "IdValue": "faacdb8e-b662-4473-8df4-4d91b03c417e"
+            },
+            "ContainerProperty": "Components",
+            "IsContainerArray": true,
+            "Data": {
+              "__type": "Sandbox.ModelRenderer",
+              "__guid": "d58692ac-7269-4f62-9fee-b247c30ce67b",
+              "__enabled": true,
+              "Flags": 0,
+              "BodyGroups": 18446744073709551615,
+              "CreateAttachments": false,
+              "LodOverride": null,
+              "MaterialGroup": null,
+              "MaterialOverride": null,
+              "Materials": null,
+              "Model": "models/props/shop_shelves/shop_shelves.vmdl",
+              "OnComponentDestroy": null,
+              "OnComponentDisabled": null,
+              "OnComponentEnabled": null,
+              "OnComponentFixedUpdate": null,
+              "OnComponentStart": null,
+              "OnComponentUpdate": null,
+              "RenderOptions": {
+                "GameLayer": true,
+                "OverlayLayer": false,
+                "BloomLayer": false,
+                "AfterUILayer": false
+              },
+              "RenderType": "On",
+              "Tint": "1,1,1,1"
+            }
+          },
+          {
+            "Id": {
+              "Type": "Component",
+              "IdValue": "a97af769-af97-4699-85f1-9a8ac1edb503"
+            },
+            "Parent": {
+              "Type": "GameObject",
+              "IdValue": "0a5d8be4-8d08-4600-a9da-4d77947421e4"
+            },
+            "PreviousElement": {
+              "Type": "Component",
+              "IdValue": "d58692ac-7269-4f62-9fee-b247c30ce67b"
+            },
+            "ContainerProperty": "Components",
+            "IsContainerArray": true,
+            "Data": {
+              "__type": "Sandbox.ModelCollider",
+              "__guid": "a97af769-af97-4699-85f1-9a8ac1edb503",
+              "__enabled": true,
+              "Flags": 0,
+              "ColliderFlags": 0,
+              "Elasticity": null,
+              "Friction": null,
+              "IsTrigger": false,
+              "Model": "models/props/shop_shelves/shop_shelves.vmdl",
+              "OnComponentDestroy": null,
+              "OnComponentDisabled": null,
+              "OnComponentEnabled": null,
+              "OnComponentFixedUpdate": null,
+              "OnComponentStart": null,
+              "OnComponentUpdate": null,
+              "OnObjectTriggerEnter": null,
+              "OnObjectTriggerExit": null,
+              "OnTriggerEnter": null,
+              "OnTriggerExit": null,
+              "RollingResistance": null,
+              "Static": true,
+              "Surface": null,
+              "SurfaceVelocity": "0,0,0"
+            }
+          }
+        ],
+        "RemovedObjects": [
+          {
+            "Id": {
+              "Type": "Component",
+              "IdValue": "4b9dd5e0-6839-47c9-8bb9-f65d3d4c84ec"
+            }
+          },
+          {
+            "Id": {
+              "Type": "Component",
+              "IdValue": "6f43c8cb-8a6d-45d4-837c-c0b347a1708a"
+            }
+          },
+          {
+            "Id": {
+              "Type": "Component",
+              "IdValue": "2b88c799-6ffd-4413-a77b-8954563da670"
+            }
+          }
+        ],
         "PropertyOverrides": [
           {
             "Target": {
@@ -1755,6 +1859,38 @@
             },
             "Property": "Position",
             "Value": "7.104523,0,57.72012"
+          },
+          {
+            "Target": {
+              "Type": "Component",
+              "IdValue": "5ae9ee0a-3a31-4637-8b45-5d134aee5b64"
+            },
+            "Property": "ShowDebugGizmos",
+            "Value": true
+          },
+          {
+            "Target": {
+              "Type": "GameObject",
+              "IdValue": "a64286ba-9be1-476a-90ef-832160935097"
+            },
+            "Property": "Position",
+            "Value": "8.56617,-13.74741,50.48937"
+          },
+          {
+            "Target": {
+              "Type": "Component",
+              "IdValue": "05a87891-6096-4316-94dc-b995485aeafe"
+            },
+            "Property": "ShowDebugGizmos",
+            "Value": true
+          },
+          {
+            "Target": {
+              "Type": "Component",
+              "IdValue": "faacdb8e-b662-4473-8df4-4d91b03c417e"
+            },
+            "Property": "IsStatic",
+            "Value": true
           }
         ],
         "MovedObjects": []
@@ -1844,6 +1980,11 @@
       "CustomBounds": false
     },
     "GameObjectSystems": {
+      "Sandbox.Clutter.ClutterGridSystem": {
+        "Storage": {
+          "$blob": "87f7c8df-0f1d-425f-af33-68bd42e7bd0a"
+        }
+      },
       "Sandbox.MovieMaker.MovieRecorderSystem": {
         "DisableClientRecording": false
       }
@@ -1855,6 +1996,7 @@
   "__references": [
     "facepunch.corrugated_wall_a_128#169125",
     "facepunch.watermelon#143952",
+    "fish.shop_shelves#105384",
     "subzerostudios.modularfloor#161965",
     "subzerostudios.modularwall#161964"
   ],

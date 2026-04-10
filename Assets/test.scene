@@ -768,7 +768,10 @@
                   "component_type": "CounterSlot"
                 }
               ],
-              "CounterTarget": null,
+              "CounterTarget": {
+                "_type": "gameobject",
+                "go": "de2f8119-8299-41b1-aa12-307379554cb2"
+              },
               "DelayAfterExit": 3,
               "ExitPoint": {
                 "_type": "gameobject",
@@ -1648,6 +1651,24 @@
             }
           ],
           "Children": []
+        },
+        {
+          "__guid": "de2f8119-8299-41b1-aa12-307379554cb2",
+          "__version": 2,
+          "Flags": 0,
+          "Name": "NPCStandPosition",
+          "Position": "0,20.52896,0",
+          "Rotation": "0,0,0,1",
+          "Scale": "1,1,1",
+          "Tags": "",
+          "Enabled": true,
+          "NetworkMode": 2,
+          "NetworkFlags": 0,
+          "NetworkOrphaned": 0,
+          "NetworkTransmit": true,
+          "OwnerTransfer": 1,
+          "Components": [],
+          "Children": []
         }
       ]
     },
@@ -2085,7 +2106,7 @@
     "GameObjectSystems": {
       "Sandbox.Clutter.ClutterGridSystem": {
         "Storage": {
-          "$blob": "29904060-2f2d-4066-869e-7632de760611"
+          "$blob": "a88926d5-9bdc-46bc-a334-fda1590db953"
         }
       },
       "Sandbox.MovieMaker.MovieRecorderSystem": {

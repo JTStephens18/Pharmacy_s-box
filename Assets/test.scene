@@ -794,7 +794,7 @@
               "__version": 2,
               "Flags": 0,
               "Name": "NPCSpawnPoint",
-              "Position": "129.8763,-242.4979,-74.17438",
+              "Position": "129.8763,-242.4979,-45.57904",
               "Rotation": "0,0,0,1",
               "Scale": "1,1,1",
               "Tags": "",
@@ -1837,32 +1837,8 @@
               "Type": "Component",
               "IdValue": "05a87891-6096-4316-94dc-b995485aeafe"
             },
-            "Property": "BoundsSize",
-            "Value": "10,10,10"
-          },
-          {
-            "Target": {
-              "Type": "Component",
-              "IdValue": "05a87891-6096-4316-94dc-b995485aeafe"
-            },
             "Property": "ShowBoundsWireframe",
             "Value": true
-          },
-          {
-            "Target": {
-              "Type": "Component",
-              "IdValue": "437ee0cc-1df1-4a70-80f1-2992f48ea158"
-            },
-            "Property": "BoundsSize",
-            "Value": "10,10,10"
-          },
-          {
-            "Target": {
-              "Type": "Component",
-              "IdValue": "437ee0cc-1df1-4a70-80f1-2992f48ea158"
-            },
-            "Property": "ShowBoundsWireframe",
-            "Value": false
           },
           {
             "Target": {
@@ -2003,7 +1979,7 @@
             {
               "__type": "Sandbox.Rigidbody",
               "__guid": "8b554025-ecb2-49f3-9568-47047b395281",
-              "__enabled": true,
+              "__enabled": false,
               "Flags": 0,
               "AngularDamping": 0,
               "EnableImpactDamage": true,
@@ -2056,7 +2032,7 @@
               "OnTriggerExit": null,
               "RollingResistance": null,
               "Scale": "50,50,50",
-              "Static": false,
+              "Static": true,
               "Surface": null,
               "SurfaceVelocity": "0,0,0"
             }
@@ -2090,26 +2066,30 @@
     "WantsSystemScene": true,
     "Metadata": {},
     "NavMesh": {
-      "Enabled": false,
+      "Enabled": true,
       "IncludeStaticBodies": true,
       "IncludeKeyframedBodies": true,
-      "EditorAutoUpdate": false,
+      "EditorAutoUpdate": true,
       "AgentHeight": 64,
       "AgentRadius": 16,
       "AgentStepSize": 18,
       "AgentMaxSlope": 40,
       "ExcludedBodies": "",
       "IncludedBodies": "",
-      "CustomBounds": false
+      "CustomBounds": false,
+      "BakedDataPath": {
+        "$reference_type": "filereference",
+        "path": "test_scene_data/navmesh/baked.navdata"
+      }
     },
     "GameObjectSystems": {
-      "Sandbox.MovieMaker.MovieRecorderSystem": {
-        "DisableClientRecording": false
-      },
       "Sandbox.Clutter.ClutterGridSystem": {
         "Storage": {
-          "$blob": "344ffc47-e1c7-4894-b7f9-a2c4f843b905"
+          "$blob": "29904060-2f2d-4066-869e-7632de760611"
         }
+      },
+      "Sandbox.MovieMaker.MovieRecorderSystem": {
+        "DisableClientRecording": false
       }
     }
   },

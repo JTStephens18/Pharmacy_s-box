@@ -4,7 +4,7 @@
     "__version": 2,
     "Flags": 0,
     "Name": "johndoe",
-    "Position": "0,0,0",
+    "Position": "0,0,6.18978",
     "Rotation": "0,0,0,1",
     "Scale": "1,1,1",
     "Tags": "",
@@ -67,6 +67,7 @@
         "Flags": 0,
         "AutoScan": true,
         "BatchSize": 1,
+        "DebugLogging": false,
         "DetectionRadius": 500,
         "HandBone": {
           "_type": "gameobject",
@@ -123,6 +124,40 @@
         "Separation": 0.25,
         "UpdatePosition": true,
         "UpdateRotation": false
+      },
+      {
+        "__type": "Sandbox.Rigidbody",
+        "__guid": "126f0202-4303-40a2-9397-b73a96b23a5a",
+        "__enabled": true,
+        "Flags": 0,
+        "AngularDamping": 0,
+        "EnableImpactDamage": true,
+        "EnhancedCcd": false,
+        "Gravity": true,
+        "GravityScale": 1,
+        "ImpactDamage": 0,
+        "LinearDamping": 0,
+        "Locking": {
+          "X": false,
+          "Y": false,
+          "Z": false,
+          "Pitch": false,
+          "Yaw": false,
+          "Roll": false
+        },
+        "MassCenterOverride": "0,0,0",
+        "MassOverride": 0,
+        "MinImpactDamageSpeed": 500,
+        "MotionEnabled": true,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "OverrideMassCenter": false,
+        "RigidbodyFlags": 0,
+        "StartAsleep": false
       }
     ],
     "Children": [

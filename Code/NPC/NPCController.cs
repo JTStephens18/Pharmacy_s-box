@@ -36,6 +36,8 @@ public sealed class NPCController : Component
 	[Property] public int BatchSize { get; set; } = 4;
 	[Group( "Behavior" )]
 	[Property] public bool IsCollecting { get; set; } = true;
+	[Group( "Behavior" )]
+	[Property] public bool DebugLogging { get; set; } = false;
 
 	[Group( "ID Card" )]
 	[Property] public NPCIdentity NpcIdentity { get; set; }
@@ -102,7 +104,21 @@ public sealed class NPCController : Component
 	{
 		_agent = GetComponent<NavMeshAgent>();
 		if ( _agent == null )
+		{
 			Log.Warning( $"[NPCController] {GameObject.Name}: NavMeshAgent component not found!" );
+			return;
+		}
+
+		if ( DebugLogging ) Log.Info( $"[NPCController] Agent speed={_agent.MaxSpeed}" );
+
+		if ( _agent.MaxSpeed <= 0f )
+			_agent.MaxSpeed = 150f;
+
+		// Check if the navmesh exists at our position
+		var closest = Scene.NavMesh.GetClosestPoint( WorldPosition );
+		if ( DebugLogging ) Log.Info( $"[NPCController] NavMesh closest point to spawn: {closest}" );
+		if ( closest == null )
+			Log.Warning( "[NPCController] No NavMesh found! Enable NavMesh in the scene editor header." );
 	}
 
 	protected override void OnFixedUpdate()
@@ -178,6 +194,8 @@ public sealed class NPCController : Component
 		}
 	}
 
+	private bool _diagLogged;
+
 	private void HandleMovingToItem()
 	{
 		if ( _currentTargetItem == null || !_currentTargetItem.IsValid() )
@@ -189,13 +207,49 @@ public sealed class NPCController : Component
 
 		if ( _agent == null ) return;
 
-		// Give the NavMesh a short buffer to start moving before we check arrival.
-		// Without this, velocity=0 on frame 1 would cause instant false-arrival.
 		_moveTimer += Time.Delta;
+		_agent.MoveTo( _currentTargetItem.WorldPosition );
+
+		// One-time deep diagnostic after 1 second
+		if ( DebugLogging && !_diagLogged && _moveTimer > 1f )
+		{
+			_diagLogged = true;
+			var dest = _currentTargetItem.WorldPosition;
+			float dist = WorldPosition.Distance( dest );
+
+			Log.Info( $"[NPC DIAG] ===== NavMeshAgent Deep Diagnostic =====" );
+			Log.Info( $"[NPC DIAG] NPC pos         : {WorldPosition}" );
+			Log.Info( $"[NPC DIAG] Target pos      : {dest}" );
+			Log.Info( $"[NPC DIAG] Distance         : {dist:F1}" );
+			Log.Info( $"[NPC DIAG] Agent.Enabled    : {_agent.Enabled}" );
+			Log.Info( $"[NPC DIAG] Agent.MaxSpeed   : {_agent.MaxSpeed}" );
+			Log.Info( $"[NPC DIAG] Agent.Velocity   : {_agent.Velocity}" );
+			Log.Info( $"[NPC DIAG] Agent.WishVelocity: {_agent.WishVelocity}" );
+			Log.Info( $"[NPC DIAG] Agent.TargetPosition: {_agent.TargetPosition}" );
+			Log.Info( $"[NPC DIAG] Agent.GameObject : {_agent.GameObject.Name}" );
+
+			// Check for conflicting components
+			var rb = GetComponent<Rigidbody>();
+			Log.Info( $"[NPC DIAG] Has Rigidbody    : {rb != null}" );
+			if ( rb != null )
+				Log.Info( $"[NPC DIAG]   MotionEnabled={rb.MotionEnabled} Gravity={rb.Gravity}" );
+
+			var cc = GetComponent<CharacterController>();
+			Log.Info( $"[NPC DIAG] Has CharController: {cc != null}" );
+
+			// Try to manually nudge position to verify transform isn't locked
+			var before = WorldPosition;
+			WorldPosition += Vector3.Up * 0.01f;
+			var after = WorldPosition;
+			WorldPosition = before; // restore
+			Log.Info( $"[NPC DIAG] Transform moveable: {before != after}" );
+			Log.Info( $"[NPC DIAG] ===== End Diagnostic =====" );
+		}
+
 		if ( _moveTimer < 0.25f ) return;
 
-		float dist = WorldPosition.Distance( _currentTargetItem.WorldPosition );
-		if ( dist <= ReachDistance )
+		float d = WorldPosition.Distance( _currentTargetItem.WorldPosition );
+		if ( d <= ReachDistance )
 		{
 			_pauseTimer = 0f;
 			_state = NPCState.WaitingAtItem;
@@ -389,7 +443,7 @@ public sealed class NPCController : Component
 			}
 		}
 
-		Log.Info( $"[NPCController] Scan: {total} items | {skippedDelivered} delivered | {skippedCategory} wrong category | {skippedRange} out of range ({DetectionRadius}u) | WantedCategories={WantedCategories.Count}" );
+		if ( DebugLogging ) Log.Info( $"[NPCController] Scan: {total} items | {skippedDelivered} delivered | {skippedCategory} wrong category | {skippedRange} out of range ({DetectionRadius}u) | WantedCategories={WantedCategories.Count}" );
 
 		if ( nearestItem != null )
 			NavigateTo( nearestItem );
@@ -414,7 +468,7 @@ public sealed class NPCController : Component
 	{
 		_currentTargetItem = item;
 		_moveTimer = 0f;
-		Log.Info( $"[NPCController] NavigateTo: {item.GameObject.Name} at {item.WorldPosition}, agent={_agent != null}" );
+		if ( DebugLogging ) Log.Info( $"[NPCController] NavigateTo: {item.GameObject.Name} at {item.WorldPosition}, agent={_agent != null}" );
 		_agent?.MoveTo( item.WorldPosition );
 		_state = NPCState.MovingToItem;
 	}

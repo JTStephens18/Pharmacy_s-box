@@ -33,6 +33,8 @@ public sealed class NPCController : Component
 	[Group( "Behavior" )]
 	[Property] public float PickupPauseTime { get; set; } = 0.5f;
 	[Group( "Behavior" )]
+	[Property] public float PlacePauseTime { get; set; } = 1.5f;
+	[Group( "Behavior" )]
 	[Property] public int BatchSize { get; set; } = 4;
 	[Group( "Behavior" )]
 	[Property] public bool IsCollecting { get; set; } = true;
@@ -55,6 +57,7 @@ public sealed class NPCController : Component
 		WaitingAtItem,
 		PickingUp,
 		MovingToCounter,
+		WaitingToPlace,
 		PlacingItem,
 		WaitingForCheckout,
 		MovingToExit
@@ -132,6 +135,7 @@ public sealed class NPCController : Component
 			case NPCState.WaitingAtItem: HandleWaitingAtItem(); break;
 			case NPCState.PickingUp: HandlePickingUp(); break;
 			case NPCState.MovingToCounter: HandleMovingToCounter(); break;
+			case NPCState.WaitingToPlace: HandleWaitingToPlace(); break;
 			case NPCState.PlacingItem: HandlePlacingItem(); break;
 			case NPCState.WaitingForCheckout: HandleWaitingForCheckout(); break;
 			case NPCState.MovingToExit: HandleMovingToExit(); break;
@@ -248,7 +252,7 @@ public sealed class NPCController : Component
 
 		if ( _moveTimer < 0.25f ) return;
 
-		float d = WorldPosition.Distance( _currentTargetItem.WorldPosition );
+		float d = HorizontalDistance( WorldPosition, _currentTargetItem.WorldPosition );
 		if ( d <= ReachDistance )
 		{
 			_pauseTimer = 0f;
@@ -260,7 +264,10 @@ public sealed class NPCController : Component
 	{
 		_pauseTimer += Time.Delta;
 		if ( _pauseTimer >= PickupPauseTime )
+		{
+			if ( DebugLogging ) Log.Info( "[NPCController] WaitingAtItem → PickingUp" );
 			_state = NPCState.PickingUp;
+		}
 	}
 
 	private void HandlePickingUp()
@@ -272,6 +279,11 @@ public sealed class NPCController : Component
 		{
 			_currentTargetItem.OnPickedUp( HandBone );
 			_heldItems.Add( _currentTargetItem );
+			if ( DebugLogging ) Log.Info( $"[NPCController] Picked up {_currentTargetItem.GameObject.Name}, held={_heldItems.Count}/{BatchSize}" );
+		}
+		else
+		{
+			if ( DebugLogging ) Log.Info( $"[NPCController] Pickup FAILED: item={_currentTargetItem != null}, valid={_currentTargetItem?.IsValid()}, hand={HandBone != null}" );
 		}
 
 		_currentTargetItem = null;
@@ -279,16 +291,21 @@ public sealed class NPCController : Component
 		bool batchFull = _heldItems.Count >= BatchSize;
 		bool shouldCheckout = batchFull || !IsCollecting;
 
+		if ( DebugLogging ) Log.Info( $"[NPCController] batchFull={batchFull}, IsCollecting={IsCollecting}, shouldCheckout={shouldCheckout}, counterSlots={_counterSlots.Count}" );
+
 		if ( shouldCheckout && _counterSlots.Count > 0 )
 		{
+			if ( DebugLogging ) Log.Info( "[NPCController] PickingUp → MovingToCounter" );
 			MoveToCounter();
 		}
 		else if ( !shouldCheckout && IsCollecting )
 		{
+			if ( DebugLogging ) Log.Info( "[NPCController] PickingUp → Idle (collecting more)" );
 			_state = NPCState.Idle;
 		}
 		else
 		{
+			if ( DebugLogging ) Log.Info( "[NPCController] PickingUp → Idle (no counter slots)" );
 			_state = NPCState.Idle;
 		}
 	}
@@ -300,11 +317,23 @@ public sealed class NPCController : Component
 		_moveTimer += Time.Delta;
 		if ( _moveTimer < 0.25f ) return;
 
-		// Stand at the counter target if assigned, otherwise aim for the first slot
 		var dest = GetCounterStandPosition();
-		float dist = WorldPosition.Distance( dest );
+		float dist = HorizontalDistance( WorldPosition, dest );
+
 		if ( dist <= ReachDistance )
 		{
+			if ( DebugLogging ) Log.Info( $"[NPCController] Reached counter (dist={dist:F1}), MovingToCounter → WaitingToPlace" );
+			_pauseTimer = 0f;
+			_state = NPCState.WaitingToPlace;
+		}
+	}
+
+	private void HandleWaitingToPlace()
+	{
+		_pauseTimer += Time.Delta;
+		if ( _pauseTimer >= PlacePauseTime )
+		{
+			if ( DebugLogging ) Log.Info( "[NPCController] WaitingToPlace → PlacingItem" );
 			_state = NPCState.PlacingItem;
 		}
 	}
@@ -321,19 +350,27 @@ public sealed class NPCController : Component
 			return;
 		}
 
+		if ( DebugLogging ) Log.Info( $"[NPCController] PlacingItem: {_heldItems.Count} held items, {_counterSlots.Count} counter slots" );
+
 		var toPlace = new List<InteractableItem>( _heldItems );
 		var placed = new List<InteractableItem>();
 
 		foreach ( var item in toPlace )
 		{
-			if ( item == null || !item.IsValid() ) continue;
+			if ( item == null ) continue;
 
 			CounterSlot slot = GetAvailableCounterSlot();
-			if ( slot == null ) break;
+			if ( slot == null )
+			{
+				if ( DebugLogging ) Log.Info( "[NPCController] No available counter slot" );
+				break;
+			}
+
+			// Re-enable the GameObject first (it was disabled during pickup)
+			item.GameObject.Enabled = true;
 
 			// Unparent from NPC hand before repositioning
 			item.GameObject.SetParent( null, true );
-			item.GameObject.Enabled = true;
 
 			var col = item.GetComponent<Collider>();
 			if ( col != null ) col.Enabled = true;
@@ -342,6 +379,8 @@ public sealed class NPCController : Component
 			slot.PlaceItem( item.GameObject );
 			_placedItems.Add( item.GameObject );
 			placed.Add( item );
+
+			if ( DebugLogging ) Log.Info( $"[NPCController] Placed {item.GameObject.Name} on counter slot" );
 		}
 
 		foreach ( var p in placed )
@@ -371,7 +410,7 @@ public sealed class NPCController : Component
 		_moveTimer += Time.Delta;
 		if ( _moveTimer < 0.25f ) return;
 
-		float dist = WorldPosition.Distance( _exitPoint.WorldPosition );
+		float dist = HorizontalDistance( WorldPosition, _exitPoint.WorldPosition );
 		if ( dist <= ReachDistance * 2f )
 			DespawnNPC();
 	}
@@ -399,6 +438,14 @@ public sealed class NPCController : Component
 		{
 			DespawnNPC();
 		}
+	}
+
+	/// <summary>Returns XY distance ignoring vertical (Z) axis. NavMesh agents walk on a flat plane.</summary>
+	private static float HorizontalDistance( Vector3 a, Vector3 b )
+	{
+		float dx = a.x - b.x;
+		float dy = a.y - b.y;
+		return MathF.Sqrt( dx * dx + dy * dy );
 	}
 
 	/// <summary>Returns the world position the NPC should walk to when going to the counter.</summary>

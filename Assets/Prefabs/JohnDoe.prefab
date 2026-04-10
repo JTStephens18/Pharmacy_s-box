@@ -67,7 +67,7 @@
         "Flags": 0,
         "AutoScan": true,
         "BatchSize": 1,
-        "DebugLogging": false,
+        "DebugLogging": true,
         "DetectionRadius": 500,
         "HandBone": {
           "_type": "gameobject",
@@ -83,6 +83,7 @@
         "OnComponentStart": null,
         "OnComponentUpdate": null,
         "PickupPauseTime": 0.5,
+        "PlacePauseTime": 1,
         "Prescription": "data/prescriptions/johndoe.rx",
         "ReachDistance": 40,
         "ScanInterval": 1,

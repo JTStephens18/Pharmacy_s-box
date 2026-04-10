@@ -19,6 +19,8 @@ public sealed class NPCSpawnManager : Component
 	[Group( "Shared Scene References" )]
 	[Property] public List<CounterSlot> CounterSlots { get; set; } = new();
 	[Group( "Shared Scene References" )]
+	[Property] public GameObject CounterTarget { get; set; }
+	[Group( "Shared Scene References" )]
 	[Property] public GameObject ExitPoint { get; set; }
 	[Group( "Shared Scene References" )]
 	[Property] public IDCardSlot IdCardSlot { get; set; }
@@ -41,7 +43,7 @@ public sealed class NPCSpawnManager : Component
 
 	public void StartNPCSpawning( RoundConfig config )
 	{
-		if ( !Networking.IsHost ) return;
+		if ( Networking.IsActive && !Networking.IsHost ) return;
 		if ( config == null ) { Log.Error( "[NPCSpawnManager] RoundConfig is null." ); return; }
 		if ( SpawnPoint == null ) { Log.Error( "[NPCSpawnManager] SpawnPoint not assigned." ); return; }
 
@@ -97,7 +99,7 @@ public sealed class NPCSpawnManager : Component
 			return;
 		}
 
-		_activeNPC.AssignSceneReferences( CounterSlots, ExitPoint, IdCardSlot, AllowedShelfSlots );
+		_activeNPC.AssignSceneReferences( CounterSlots, CounterTarget, ExitPoint, IdCardSlot, AllowedShelfSlots );
 
 		if ( entry.DoppelgangerProfile != null )
 			_activeNPC.AssignDoppelgangerProfile( entry.DoppelgangerProfile );

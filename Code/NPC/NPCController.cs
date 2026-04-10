@@ -70,6 +70,7 @@ public sealed class NPCController : Component
 
 	// Scene references (injected by NPCSpawnManager)
 	private List<CounterSlot> _counterSlots = new();
+	private GameObject _counterTarget;   // stand position in front of counter
 	private GameObject _exitPoint;
 	private IDCardSlot _idCardSlot;
 	private List<ShelfSlot> _allowedShelfSlots = new();
@@ -82,7 +83,7 @@ public sealed class NPCController : Component
 	private List<GameObject> _placedItems = new();
 	private float _scanTimer;
 	private float _pauseTimer;
-	private bool _hasStartedMoving;
+	private float _moveTimer;        // seconds since last MoveTo — guards against velocity=0 on frame 1
 	private bool _hasCheckedOut;
 	private bool _hasPlacedIDCard;
 	private GameObject _spawnedIdCard;
@@ -100,11 +101,13 @@ public sealed class NPCController : Component
 	protected override void OnAwake()
 	{
 		_agent = GetComponent<NavMeshAgent>();
+		if ( _agent == null )
+			Log.Warning( $"[NPCController] {GameObject.Name}: NavMeshAgent component not found!" );
 	}
 
 	protected override void OnFixedUpdate()
 	{
-		if ( !Networking.IsHost ) return;
+		if ( Networking.IsActive && !Networking.IsHost ) return;
 
 		switch ( _state )
 		{
@@ -122,9 +125,10 @@ public sealed class NPCController : Component
 	// ── Scene reference injection ─────────────────────────────────────
 
 	/// <summary>Called by NPCSpawnManager after instantiation to inject shared scene refs.</summary>
-	public void AssignSceneReferences( List<CounterSlot> counters, GameObject exit, IDCardSlot cardSlot, List<ShelfSlot> shelfSlots )
+	public void AssignSceneReferences( List<CounterSlot> counters, GameObject counterTarget, GameObject exit, IDCardSlot cardSlot, List<ShelfSlot> shelfSlots )
 	{
 		_counterSlots = counters ?? new();
+		_counterTarget = counterTarget;
 		_exitPoint = exit;
 		_idCardSlot = cardSlot;
 		_allowedShelfSlots = shelfSlots ?? new();
@@ -142,14 +146,14 @@ public sealed class NPCController : Component
 	/// <summary>Called by CashRegister to send this NPC to exit.</summary>
 	public void TriggerCheckout()
 	{
-		if ( !Networking.IsHost ) return;
+		if ( Networking.IsActive && !Networking.IsHost ) return;
 		_hasCheckedOut = true;
 	}
 
 	/// <summary>Called by GunCase to kill this NPC.</summary>
 	public void Kill()
 	{
-		if ( !Networking.IsHost ) return;
+		if ( Networking.IsActive && !Networking.IsHost ) return;
 		FireExitEvent();
 		GameObject.Destroy();
 	}
@@ -185,23 +189,14 @@ public sealed class NPCController : Component
 
 		if ( _agent == null ) return;
 
-		if ( !_hasStartedMoving )
-		{
-			float dist = WorldPosition.Distance( _currentTargetItem.WorldPosition );
-			if ( dist > ReachDistance )
-				_hasStartedMoving = true;
-			else
-			{
-				_hasStartedMoving = false;
-				_pauseTimer = 0f;
-				_state = NPCState.WaitingAtItem;
-				return;
-			}
-		}
+		// Give the NavMesh a short buffer to start moving before we check arrival.
+		// Without this, velocity=0 on frame 1 would cause instant false-arrival.
+		_moveTimer += Time.Delta;
+		if ( _moveTimer < 0.25f ) return;
 
-		if ( _hasStartedMoving && _agent.Velocity.LengthSquared < 1f )
+		float dist = WorldPosition.Distance( _currentTargetItem.WorldPosition );
+		if ( dist <= ReachDistance )
 		{
-			_hasStartedMoving = false;
 			_pauseTimer = 0f;
 			_state = NPCState.WaitingAtItem;
 		}
@@ -227,14 +222,14 @@ public sealed class NPCController : Component
 
 		_currentTargetItem = null;
 
-		bool shouldCheckout = _heldItems.Count >= BatchSize || (!IsCollecting && _heldItems.Count > 0);
+		bool batchFull = _heldItems.Count >= BatchSize;
+		bool shouldCheckout = batchFull || !IsCollecting;
 
 		if ( shouldCheckout && _counterSlots.Count > 0 )
 		{
-			_agent?.MoveTo( _counterSlots[0].WorldPosition );
-			_state = NPCState.MovingToCounter;
+			MoveToCounter();
 		}
-		else if ( _heldItems.Count < BatchSize && IsCollecting )
+		else if ( !shouldCheckout && IsCollecting )
 		{
 			_state = NPCState.Idle;
 		}
@@ -248,22 +243,14 @@ public sealed class NPCController : Component
 	{
 		if ( _agent == null ) return;
 
-		if ( !_hasStartedMoving )
-		{
-			float dist = _counterSlots.Count > 0 ? WorldPosition.Distance( _counterSlots[0].WorldPosition ) : 0f;
-			if ( dist > ReachDistance )
-				_hasStartedMoving = true;
-			else
-			{
-				_hasStartedMoving = false;
-				_state = NPCState.PlacingItem;
-				return;
-			}
-		}
+		_moveTimer += Time.Delta;
+		if ( _moveTimer < 0.25f ) return;
 
-		if ( _hasStartedMoving && _agent.Velocity.LengthSquared < 1f )
+		// Stand at the counter target if assigned, otherwise aim for the first slot
+		var dest = GetCounterStandPosition();
+		float dist = WorldPosition.Distance( dest );
+		if ( dist <= ReachDistance )
 		{
-			_hasStartedMoving = false;
 			_state = NPCState.PlacingItem;
 		}
 	}
@@ -290,9 +277,9 @@ public sealed class NPCController : Component
 			CounterSlot slot = GetAvailableCounterSlot();
 			if ( slot == null ) break;
 
+			// Unparent from NPC hand before repositioning
+			item.GameObject.SetParent( null, true );
 			item.GameObject.Enabled = true;
-			foreach ( var r in item.GameObject.GetComponentsInChildren<ModelRenderer>() )
-				r.Enabled = true;
 
 			var col = item.GetComponent<Collider>();
 			if ( col != null ) col.Enabled = true;
@@ -307,7 +294,7 @@ public sealed class NPCController : Component
 			_heldItems.Remove( p );
 
 		if ( _heldItems.Count > 0 )
-			return; // Stay in placing state, retry next tick
+			return; // All counter slots full — wait for player to bag an item
 
 		PlaceIdCard();
 		_state = NPCState.WaitingForCheckout;
@@ -321,42 +308,36 @@ public sealed class NPCController : Component
 
 	private void HandleMovingToExit()
 	{
-		if ( _agent == null ) return;
-
-		if ( !_hasStartedMoving )
+		if ( _exitPoint == null )
 		{
-			if ( _exitPoint != null )
-			{
-				float dist = WorldPosition.Distance( _exitPoint.WorldPosition );
-				if ( dist > ReachDistance * 2f )
-					_hasStartedMoving = true;
-				else
-				{
-					DespawnNPC();
-					return;
-				}
-			}
-			else
-			{
-				DespawnNPC();
-				return;
-			}
-		}
-
-		if ( _hasStartedMoving && _agent.Velocity.LengthSquared < 1f )
-		{
-			_hasStartedMoving = false;
 			DespawnNPC();
+			return;
 		}
+
+		_moveTimer += Time.Delta;
+		if ( _moveTimer < 0.25f ) return;
+
+		float dist = WorldPosition.Distance( _exitPoint.WorldPosition );
+		if ( dist <= ReachDistance * 2f )
+			DespawnNPC();
 	}
 
 	// ── Helpers ───────────────────────────────────────────────────────
+
+	private void MoveToCounter()
+	{
+		var dest = GetCounterStandPosition();
+		_moveTimer = 0f;
+		_agent?.MoveTo( dest );
+		_state = NPCState.MovingToCounter;
+	}
 
 	private void GoToExit()
 	{
 		CleanupIdCard();
 		if ( _exitPoint != null )
 		{
+			_moveTimer = 0f;
 			_agent?.MoveTo( _exitPoint.WorldPosition );
 			_state = NPCState.MovingToExit;
 		}
@@ -364,6 +345,19 @@ public sealed class NPCController : Component
 		{
 			DespawnNPC();
 		}
+	}
+
+	/// <summary>Returns the world position the NPC should walk to when going to the counter.</summary>
+	private Vector3 GetCounterStandPosition()
+	{
+		if ( _counterTarget != null && _counterTarget.IsValid() )
+			return _counterTarget.WorldPosition;
+
+		// Fallback: first counter slot position
+		if ( _counterSlots.Count > 0 && _counterSlots[0] != null )
+			return _counterSlots[0].WorldPosition;
+
+		return WorldPosition;
 	}
 
 	private void ScanForItems()
@@ -376,28 +370,26 @@ public sealed class NPCController : Component
 			return;
 		}
 
-		// Sphere overlap for InteractableItems within detection radius
-		var tr = Scene.PhysicsWorld.Trace
-			.Sphere( DetectionRadius, WorldPosition, WorldPosition )
-			.Run();
-
-		// Fallback: search scene-wide
 		float nearest = float.MaxValue;
 		InteractableItem nearestItem = null;
+		int total = 0, skippedDelivered = 0, skippedCategory = 0, skippedRange = 0;
 
 		foreach ( var item in Scene.GetAllComponents<InteractableItem>() )
 		{
-			if ( item.IsDelivered ) continue;
-			if ( WantedCategories.Count > 0 && !WantedCategories.Contains( item.ItemCategory ) ) continue;
+			total++;
+			if ( item.IsDelivered ) { skippedDelivered++; continue; }
+			if ( WantedCategories.Count > 0 && !WantedCategories.Contains( item.ItemCategory ) ) { skippedCategory++; continue; }
 
 			float dist = WorldPosition.Distance( item.WorldPosition );
-			if ( dist > DetectionRadius ) continue;
+			if ( dist > DetectionRadius ) { skippedRange++; continue; }
 			if ( dist < nearest )
 			{
 				nearest = dist;
 				nearestItem = item;
 			}
 		}
+
+		Log.Info( $"[NPCController] Scan: {total} items | {skippedDelivered} delivered | {skippedCategory} wrong category | {skippedRange} out of range ({DetectionRadius}u) | WantedCategories={WantedCategories.Count}" );
 
 		if ( nearestItem != null )
 			NavigateTo( nearestItem );
@@ -410,7 +402,6 @@ public sealed class NPCController : Component
 			if ( slot == null || !slot.IsValid() || !slot.HasItems ) continue;
 			if ( WantedCategories.Count > 0 && !WantedCategories.Contains( slot.AcceptedCategory ) ) continue;
 
-			// Get top item from slot
 			var item = slot.PeekTopItem();
 			if ( item == null || item.IsDelivered ) continue;
 
@@ -422,7 +413,8 @@ public sealed class NPCController : Component
 	private void NavigateTo( InteractableItem item )
 	{
 		_currentTargetItem = item;
-		_hasStartedMoving = false;
+		_moveTimer = 0f;
+		Log.Info( $"[NPCController] NavigateTo: {item.GameObject.Name} at {item.WorldPosition}, agent={_agent != null}" );
 		_agent?.MoveTo( item.WorldPosition );
 		_state = NPCState.MovingToItem;
 	}

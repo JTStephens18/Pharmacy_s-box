@@ -147,7 +147,10 @@
         "__guid": "5802126a-c116-4a56-ab7b-b808bb5aa124",
         "__enabled": true,
         "Flags": 0,
-        "GrabTarget": null,
+        "GrabTarget": {
+          "_type": "gameobject",
+          "go": "96865fc2-a936-4c58-811d-ff1370118a18"
+        },
         "ItemCategory": "data/items/medpack.itemcat",
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
@@ -157,7 +160,26 @@
         "OnComponentUpdate": null
       }
     ],
-    "Children": [],
+    "Children": [
+      {
+        "__guid": "96865fc2-a936-4c58-811d-ff1370118a18",
+        "__version": 2,
+        "Flags": 0,
+        "Name": "GrabTarget",
+        "Position": "0,0,0",
+        "Rotation": "0,0,0,1",
+        "Scale": "1,1,1",
+        "Tags": "",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "NetworkFlags": 0,
+        "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
+        "OwnerTransfer": 1,
+        "Components": [],
+        "Children": []
+      }
+    ],
     "__properties": {
       "NetworkInterpolation": true,
       "TimeScale": 1,

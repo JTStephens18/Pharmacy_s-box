@@ -24,7 +24,7 @@ public sealed class GameStarter : Component
 
 	protected override void OnStart()
 	{
-		if ( !Networking.IsHost ) return;
+		if ( Networking.IsActive && !Networking.IsHost ) return;
 
 		LogServerInfo();
 
@@ -79,6 +79,7 @@ public sealed class GameStarter : Component
 				var controller = npc.GetComponent<NPCController>();
 				controller?.AssignSceneReferences(
 					TestSpawnManager.CounterSlots,
+					TestSpawnManager.CounterTarget,
 					TestSpawnManager.ExitPoint,
 					TestSpawnManager.IdCardSlot,
 					TestSpawnManager.AllowedShelfSlots

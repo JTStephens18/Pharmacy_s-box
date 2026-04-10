@@ -81,6 +81,9 @@ public sealed class CounterSlot : Component, IPlaceable
 		var placement = ItemPlacements[emptyIdx];
 		placement.PlacedItem = item;
 
+		// Unparent from NPC hand (or wherever it came from) before repositioning
+		item.SetParent( null, true );
+
 		// Position in world space (s&box NetworkObjects can't be parented to non-NetworkObjects)
 		item.WorldPosition = WorldTransform.PointToWorld( placement.PositionOffset );
 		item.WorldRotation = WorldRotation * placement.RotationOffset.ToRotation();

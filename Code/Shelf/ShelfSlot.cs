@@ -20,12 +20,114 @@ public sealed class ShelfSlot : Component, IPlaceable
 	[Property] public ItemCategory AcceptedCategory { get; set; }
 	[Property] public bool RequireHeldItem { get; set; } = true;
 
+	[Property, Group( "Bounds" )] public Vector3 BoundsSize { get; set; } = new Vector3( 10f, 10f, 10f );
+	[Property, Group( "Bounds" )] public bool ShowBoundsWireframe { get; set; } = false;
+
+	/// <summary>Set by PlayerInteraction when the player is aiming at this slot.</summary>
+	[Hide] public bool IsHighlighted { get; set; }
+
+	private const float EdgeThickness = 0.5f; // world units
+	private System.Collections.Generic.List<GameObject> _wireframeEdges;
+
 	[Sync( SyncFlags.FromHost )] public int CurrentItemCount { get; set; } = 0;
 
 	public bool IsOccupied => CurrentItemCount >= ItemPlacements.Count;
 	public bool HasItems => CurrentItemCount > 0;
 	public int MaxItems => ItemPlacements.Count;
 	public Vector3 Position => WorldPosition;
+
+	// ── Bounds ────────────────────────────────────────────────────────
+
+	/// <summary>Returns the local-space bounding box centered on the slot.</summary>
+	public BBox GetLocalBounds() => new BBox( -BoundsSize / 2f, BoundsSize / 2f );
+
+	/// <summary>Returns true if a world-space point falls within this slot's bounds.</summary>
+	public bool ContainsWorldPoint( Vector3 worldPoint )
+	{
+		var localPoint = WorldRotation.Inverse * ( worldPoint - WorldPosition );
+		return GetLocalBounds().Contains( localPoint );
+	}
+
+	/// <summary>Called by PlayerInteraction to show/hide the runtime bounds visual.</summary>
+	public void SetBoundsVisualActive( bool active )
+	{
+		if ( active )
+		{
+			if ( _wireframeEdges == null || _wireframeEdges.Count == 0 )
+				CreateWireframeEdges();
+
+			UpdateWireframeEdges();
+
+			foreach ( var edge in _wireframeEdges )
+				if ( edge.IsValid() ) edge.Enabled = true;
+		}
+		else if ( _wireframeEdges != null )
+		{
+			foreach ( var edge in _wireframeEdges )
+				if ( edge != null && edge.IsValid() ) edge.Enabled = false;
+		}
+	}
+
+	private void CreateWireframeEdges()
+	{
+		_wireframeEdges = new System.Collections.Generic.List<GameObject>();
+		for ( int i = 0; i < 12; i++ )
+		{
+			var child = new GameObject( false, $"WireEdge_{i}" );
+			child.SetParent( GameObject );
+			var mr = child.AddComponent<ModelRenderer>();
+			mr.Model = Model.Load( "models/dev/box.vmdl" );
+			mr.Tint = Color.Green;
+			_wireframeEdges.Add( child );
+		}
+	}
+
+	private void UpdateWireframeEdges()
+	{
+		if ( _wireframeEdges == null || _wireframeEdges.Count < 12 ) return;
+
+		float w = BoundsSize.x;
+		float h = BoundsSize.y;
+		float d = BoundsSize.z;
+		float hw = w / 2f, hh = h / 2f, hd = d / 2f;
+
+		// Thickness in model-space (native model is 50x50x50)
+		float ts = EdgeThickness / 50f;
+
+		// 12 edges: 4 along each axis
+		(Vector3 pos, Vector3 scale)[] edges =
+		{
+			// X-axis edges (vary Z and Y corners)
+			(new Vector3(0,  hh,  hd), new Vector3(w / 50f, ts, ts)),
+			(new Vector3(0, -hh,  hd), new Vector3(w / 50f, ts, ts)),
+			(new Vector3(0,  hh, -hd), new Vector3(w / 50f, ts, ts)),
+			(new Vector3(0, -hh, -hd), new Vector3(w / 50f, ts, ts)),
+			// Y-axis edges (vary X and Z corners)
+			(new Vector3( hw, 0,  hd), new Vector3(ts, h / 50f, ts)),
+			(new Vector3(-hw, 0,  hd), new Vector3(ts, h / 50f, ts)),
+			(new Vector3( hw, 0, -hd), new Vector3(ts, h / 50f, ts)),
+			(new Vector3(-hw, 0, -hd), new Vector3(ts, h / 50f, ts)),
+			// Z-axis edges (vary X and Y corners)
+			(new Vector3( hw,  hh, 0), new Vector3(ts, ts, d / 50f)),
+			(new Vector3(-hw,  hh, 0), new Vector3(ts, ts, d / 50f)),
+			(new Vector3( hw, -hh, 0), new Vector3(ts, ts, d / 50f)),
+			(new Vector3(-hw, -hh, 0), new Vector3(ts, ts, d / 50f)),
+		};
+
+		for ( int i = 0; i < 12; i++ )
+		{
+			_wireframeEdges[i].LocalPosition = edges[i].pos;
+			_wireframeEdges[i].LocalScale = edges[i].scale;
+		}
+	}
+
+	protected override void DrawGizmos()
+	{
+		if ( !ShowBoundsWireframe ) return;
+
+		Gizmo.Draw.Color = IsHighlighted ? Color.Green : Color.Yellow.WithAlpha( 0.5f );
+		Gizmo.Draw.LineBBox( GetLocalBounds() );
+	}
 
 	// ── IPlaceable ────────────────────────────────────────────────────
 
@@ -136,43 +238,4 @@ public sealed class ShelfSlot : Component, IPlaceable
 		CurrentItemCount = 0;
 	}
 
-	[Group( "Debug" )]
-	[Property] public bool ShowDebugGizmos { get; set; } = false;
-
-	protected override void OnUpdate()
-	{
-		if ( ShowDebugGizmos )
-			DrawSlotGizmos();
-	}
-
-	private void DrawSlotGizmos()
-	{
-		using ( Gizmo.Scope( "ShelfSlotDebug", WorldTransform ) )
-		{
-			// Slot outline
-			Gizmo.Draw.Color = IsOccupied ? Color.Yellow : Color.Green;
-			Gizmo.Draw.LineBBox( BBox.FromPositionAndSize( Vector3.Zero, new Vector3( 6, 6, 6 ) ) );
-
-			// Per-placement markers
-			for ( int i = 0; i < ItemPlacements.Count; i++ )
-			{
-				var p = ItemPlacements[i];
-				bool filled = i < CurrentItemCount;
-				Gizmo.Draw.Color = filled ? Color.Red.WithAlpha( 0.6f ) : Color.Cyan.WithAlpha( 0.6f );
-				Gizmo.Draw.LineSphere( new Sphere( p.PositionOffset, 2f ) );
-			}
-		}
-	}
-
-	protected override void DrawGizmos()
-	{
-		DrawSlotGizmos();
-
-		// Category label — editor only
-		if ( AcceptedCategory != null )
-		{
-			Gizmo.Draw.Color = Color.White;
-			Gizmo.Draw.ScreenText( AcceptedCategory.Description, 14, flags: TextFlag.Center );
-		}
-	}
 }

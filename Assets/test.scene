@@ -54,8 +54,8 @@
       "__version": 2,
       "Flags": 0,
       "Name": "Directional Light",
-      "Position": "0,0,200",
-      "Rotation": "-0.2459842,0.5938582,0.2931525,0.7077327",
+      "Position": "34.33756,34.33758,208.5626",
+      "Rotation": "-0.4207781,0.497749,0.4368662,0.6199515",
       "Scale": "1,1,1",
       "Tags": "light_directional,light",
       "Enabled": true,
@@ -1772,14 +1772,22 @@
               "IdValue": "248779c8-e356-43b1-903c-4d42888a890f"
             },
             "Property": "Position",
-            "Value": "7.104523,0,57.72012"
+            "Value": "10.33958,1.633591,55.90157"
           },
           {
             "Target": {
               "Type": "Component",
               "IdValue": "5ae9ee0a-3a31-4637-8b45-5d134aee5b64"
             },
-            "Property": "ShowDebugGizmos",
+            "Property": "BoundsSize",
+            "Value": "10,16.59001,10"
+          },
+          {
+            "Target": {
+              "Type": "Component",
+              "IdValue": "5ae9ee0a-3a31-4637-8b45-5d134aee5b64"
+            },
+            "Property": "ShowBoundsWireframe",
             "Value": true
           },
           {
@@ -1795,8 +1803,32 @@
               "Type": "Component",
               "IdValue": "05a87891-6096-4316-94dc-b995485aeafe"
             },
-            "Property": "ShowDebugGizmos",
+            "Property": "BoundsSize",
+            "Value": "10,10,10"
+          },
+          {
+            "Target": {
+              "Type": "Component",
+              "IdValue": "05a87891-6096-4316-94dc-b995485aeafe"
+            },
+            "Property": "ShowBoundsWireframe",
             "Value": true
+          },
+          {
+            "Target": {
+              "Type": "Component",
+              "IdValue": "437ee0cc-1df1-4a70-80f1-2992f48ea158"
+            },
+            "Property": "BoundsSize",
+            "Value": "10,10,10"
+          },
+          {
+            "Target": {
+              "Type": "Component",
+              "IdValue": "437ee0cc-1df1-4a70-80f1-2992f48ea158"
+            },
+            "Property": "ShowBoundsWireframe",
+            "Value": false
           },
           {
             "Target": {
@@ -2019,13 +2051,13 @@
       "CustomBounds": false
     },
     "GameObjectSystems": {
-      "Sandbox.Clutter.ClutterGridSystem": {
-        "Storage": {
-          "$blob": "b15cfff0-a1d2-48a0-a27e-c53648a97d4c"
-        }
-      },
       "Sandbox.MovieMaker.MovieRecorderSystem": {
         "DisableClientRecording": false
+      },
+      "Sandbox.Clutter.ClutterGridSystem": {
+        "Storage": {
+          "$blob": "510c7dfc-266b-499b-bff2-75a49960fe6a"
+        }
       }
     }
   },

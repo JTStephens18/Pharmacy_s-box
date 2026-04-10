@@ -22,8 +22,6 @@ public sealed class PlayerInteraction : Component
 
 	[Group( "Shelf Placement" )]
 	[Property] public float BoxPlacementRange { get; set; } = 120f;
-	[Group( "Shelf Placement" )]
-	[Property] public float SlotAimAngle { get; set; } = 20f;
 
 	[Group( "Hold Scale" )]
 	[Property] public float ScaleAnimSpeed { get; set; } = 8f;
@@ -53,6 +51,9 @@ public sealed class PlayerInteraction : Component
 	private IDCardInteraction _currentIdCard;
 	private ComputerScreen _currentComputer;
 	private bool _holdingBox;
+	private ShelfSlot _highlightedSlot;
+
+	private ShelfSlot _lastBoundsSlot;
 
 	public bool IsHolding => _heldObject != null && _heldObject.IsValid();
 
@@ -86,9 +87,6 @@ public sealed class PlayerInteraction : Component
 
 		// Lerp released objects back to their original scale
 		UpdateRestoreScales();
-
-		// In-game debug drawing
-		DrawDebugGizmos();
 	}
 
 	// ── Detection ────────────────────────────────────────────────────
@@ -102,6 +100,11 @@ public sealed class PlayerInteraction : Component
 		_currentCashRegister = null;
 		_currentIdCard = null;
 		_currentComputer = null;
+
+		// Clear previous shelf slot highlight
+		if ( _highlightedSlot != null && _highlightedSlot.IsValid() )
+			_highlightedSlot.IsHighlighted = false;
+		_highlightedSlot = null;
 
 		var tr = CastRay();
 		if ( !tr.Hit ) return;
@@ -124,6 +127,24 @@ public sealed class PlayerInteraction : Component
 			_currentCounterItem = item;
 			_currentCounterSlot = CounterSlot.GetSlotContaining( item.GameObject );
 		}
+
+		// Highlight the nearest shelf slot to where the player is looking
+		if ( _currentPlaceable is ShelfSlot directSlot )
+		{
+			_highlightedSlot = directSlot;
+			directSlot.IsHighlighted = true;
+		}
+		else if ( _currentPlaceable is ShelfSection section )
+		{
+			var nearest = FindNearestSlot( section.GetSlots(), tr.EndPosition );
+			if ( nearest != null )
+			{
+				_highlightedSlot = nearest;
+				nearest.IsHighlighted = true;
+			}
+		}
+
+		UpdateBoundsVisual();
 
 		_holdingBox = IsHolding && _heldObject.GetComponent<InventoryBox>() != null;
 	}
@@ -355,38 +376,62 @@ public sealed class PlayerInteraction : Component
 		var tr = CastRay();
 		if ( !tr.Hit || tr.Distance > BoxPlacementRange ) return;
 
-		// Find the slot the player is most directly aiming at
+		// Find the nearest valid slot to the hit point
 		ShelfSlot targetSlot = null;
-		var slots = new System.Collections.Generic.List<ShelfSlot>();
 
 		if ( _currentPlaceable is ShelfSlot directSlot )
-			slots.Add( directSlot );
-		else if ( _currentPlaceable is ShelfSection section )
-			slots.AddRange( section.GetSlots() );
-
-		var camPos = Scene.Camera.WorldPosition;
-		var camFwd = Scene.Camera.WorldRotation.Forward;
-		float bestDot = float.MinValue;
-
-		foreach ( var s in slots )
 		{
-			if ( s.IsOccupied ) continue;
-			if ( s.AcceptedCategory != null && s.AcceptedCategory != nextCat ) continue;
-
-			var toSlot = (s.WorldPosition - camPos).Normal;
-			float dot = Vector3.Dot( camFwd, toSlot );
-			float angleDeg = MathF.Acos( Math.Clamp( dot, -1f, 1f ) ) * (180f / MathF.PI);
-
-			if ( angleDeg <= SlotAimAngle && dot > bestDot )
-			{
-				bestDot = dot;
-				targetSlot = s;
-			}
+			if ( !directSlot.IsOccupied
+				&& ( directSlot.AcceptedCategory == null || directSlot.AcceptedCategory == nextCat ) )
+				targetSlot = directSlot;
+		}
+		else if ( _currentPlaceable is ShelfSection section )
+		{
+			targetSlot = FindNearestSlot( section.GetSlots(), tr.EndPosition, nextCat );
 		}
 
 		if ( targetSlot == null ) return;
 
 		PlaceFromBoxOnHost( nextCat, targetSlot.GameObject, _heldObject );
+	}
+
+	// ── Shelf slot bounds visual ──────────────────────────────────────
+
+	private void UpdateBoundsVisual()
+	{
+		// Hide previous slot's visual when we move off it
+		if ( _lastBoundsSlot != null && _lastBoundsSlot.IsValid() && _lastBoundsSlot != _highlightedSlot )
+			_lastBoundsSlot.SetBoundsVisualActive( false );
+
+		// Update every frame while highlighted so SceneObject transform stays correct
+		if ( _highlightedSlot != null && _highlightedSlot.ShowBoundsWireframe )
+			_highlightedSlot.SetBoundsVisualActive( true );
+		else if ( _lastBoundsSlot != null && _lastBoundsSlot.IsValid() && _highlightedSlot == null )
+			_lastBoundsSlot.SetBoundsVisualActive( false );
+
+		_lastBoundsSlot = _highlightedSlot;
+	}
+
+	/// <summary>Finds the nearest non-occupied slot to a world point. Optionally filters by category.</summary>
+	private ShelfSlot FindNearestSlot( System.Collections.Generic.List<ShelfSlot> slots, Vector3 worldPoint, ItemCategory requiredCategory = null )
+	{
+		ShelfSlot best = null;
+		float bestDist = float.MaxValue;
+
+		foreach ( var s in slots )
+		{
+			if ( s.IsOccupied ) continue;
+			if ( requiredCategory != null && s.AcceptedCategory != null && s.AcceptedCategory != requiredCategory ) continue;
+
+			float dist = s.WorldPosition.Distance( worldPoint );
+			if ( dist < bestDist )
+			{
+				bestDist = dist;
+				best = s;
+			}
+		}
+
+		return best;
 	}
 
 	[Rpc.Host]
@@ -404,63 +449,4 @@ public sealed class PlayerInteraction : Component
 		box.Decrement();
 	}
 
-	// ── Debug ─────────────────────────────────────────────────────────
-
-	[Group( "Debug" )]
-	[Property] public bool ShowDebugGizmos { get; set; } = false;
-
-	private void DrawDebugGizmos()
-	{
-		if ( !ShowDebugGizmos ) return;
-
-		using ( Gizmo.Scope( "PlayerInteractionDebug", global::Transform.Zero ) )
-		{
-			// Pickup ray
-			Gizmo.Draw.Color = Color.White.WithAlpha( 0.4f );
-			Gizmo.Draw.Line(
-				Scene.Camera.WorldPosition,
-				Scene.Camera.WorldPosition + Scene.Camera.WorldRotation.Forward * PickupRange
-			);
-
-			// Highlight all slots in the looked-at shelf section
-			if ( _currentPlaceable is ShelfSection section )
-			{
-				foreach ( var slot in section.GetSlots() )
-				{
-					if ( slot == null ) continue;
-					using ( Gizmo.Scope( "slot", slot.WorldTransform ) )
-					{
-						Gizmo.Draw.Color = slot.IsOccupied ? Color.Yellow : Color.Green;
-						Gizmo.Draw.LineBBox( BBox.FromPositionAndSize( Vector3.Zero, new Vector3( 8, 8, 8 ) ) );
-					}
-				}
-			}
-
-			// Highlight detected delivery station
-			if ( _currentDelivery != null )
-			{
-				using ( Gizmo.Scope( "delivery", _currentDelivery.WorldTransform ) )
-				{
-					Gizmo.Draw.Color = Color.Orange;
-					Gizmo.Draw.LineBBox( BBox.FromPositionAndSize( Vector3.Zero, new Vector3( 12, 12, 12 ) ) );
-				}
-			}
-
-			// Highlight detected cash register
-			if ( _currentCashRegister != null )
-			{
-				using ( Gizmo.Scope( "register", _currentCashRegister.WorldTransform ) )
-				{
-					Gizmo.Draw.Color = Color.Cyan;
-					Gizmo.Draw.LineBBox( BBox.FromPositionAndSize( Vector3.Zero, new Vector3( 12, 12, 12 ) ) );
-				}
-			}
-		}
-	}
-
-	// Editor-only gizmos (always on in editor)
-	protected override void DrawGizmos()
-	{
-		DrawDebugGizmos();
-	}
 }
